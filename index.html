@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rise &amp; Roam｜久坐休息提醒器・每 25 分鐘起身走動 · 起來走一走</title>
+<meta name="description" content="久坐族的溫柔番茄鐘：每 25 分鐘提醒你起身走動、伸展，讓久坐的身體恢復柔軟與彈性。免費、可安裝成桌面 App、內建起身小動作提示。">
+<meta name="theme-color" content="#f3ede2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16.8' r='11' fill='none' stroke='%23b8924a' stroke-width='3'/%3E%3Crect x='14.4' y='2.2' width='3.2' height='3.2' rx='.6' transform='rotate(45 16 3.8)' fill='%23b8924a'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Rise & Roam · 起來走一走">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="久坐休息提醒器 · 該起來走一走了">
+<meta property="og:description" content="每 25 分鐘溫柔提醒你起身走動、伸展，讓久坐的身體恢復柔軟與彈性。">
+<meta property="og:image" content="pexels-afhamhmsyri-36903387.jpg">
+<meta property="og:image:alt" content="晨光中的湖泊與山巒">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Rise & Roam · 起來走一走",
+  "alternateName": "久坐休息提醒器",
+  "description": "久坐族的溫柔番茄鐘：每 25 分鐘提醒你起身走動、伸展，讓久坐的身體恢復柔軟與彈性。",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Web",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": "zh-Hant",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" }
+}
+</script>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rise & Roam">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Dancing+Script:wght@500;600&family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#B8924A;
+    --gold-deep:#9c7a45;
+    --gold-soft:#d8b78a;
+    --gold-light:rgba(184,146,74,.14);
+    --gold-border:rgba(184,146,74,.32);
+    --glow:rgba(206,164,102,.55);
+    --brown-deep:#43301c;
+    --text-2:#8a7860;
+    --text-3:#a99a86;
+    --bg-1:#f7f1e8;
+    --bg-2:#efe5d4;
+    --ring-track:#ede5d5;
+    --card:rgba(255,253,248,.77);
+    --serif-en:'Cormorant Garamond',serif;
+    --serif:'Noto Serif TC',serif;
+    --sans:'Noto Sans TC',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{min-height:100%}
+  body{
+    font-family:var(--sans);
+    background:var(--bg-1);
+    color:var(--brown-deep);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:24px 24px 32px;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .card{
+    position:relative;
+    width:100%;max-width:392px;
+    background:var(--card);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.7);
+    border-radius:26px;
+    padding:42px 32px 30px;
+    text-align:center;
+    box-shadow:
+      0 34px 80px -28px rgba(120,90,55,.5),
+      0 0 64px -22px rgba(206,164,102,.32),
+      inset 0 1.5px 0 rgba(255,255,255,.8),
+      inset 0 -1px 0 rgba(150,112,64,.07);
+    animation:cardIn 1.3s cubic-bezier(.22,.61,.36,1) both;
+  }
+  @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+  /* 進場依序浮現（標題→副標→飾線→圓環→下方控制項） */
+  @keyframes fadeSeq{from{opacity:0}to{opacity:1}}
+  .divider{animation:fadeSeq .9s ease both .55s}
+  .ring-wrap{animation:fadeSeq 1s ease both .72s}
+  .interval-note,.rest-count,.move-tip,.label,.sounds-carousel,.cta-dots,.cta-carousel,.cta-hint,.share-btn,.foot{animation:fadeSeq .9s ease both 1.05s}
+
+  h1{
+    font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:.08em;margin-bottom:14px;
+    background:linear-gradient(100deg,var(--brown-deep) 30%,#6e542f 50%,var(--brown-deep) 70%);
+    background-size:260% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:titleReveal 1.7s cubic-bezier(.22,.61,.36,1) .2s both, titleShimmer 11s ease-in-out infinite;
+  }
+  @keyframes titleShimmer{0%{background-position:130% 0}100%{background-position:-30% 0}}
+  @keyframes titleReveal{from{opacity:0;letter-spacing:-.04em;transform:translateY(6px)}to{opacity:1;letter-spacing:.08em;transform:translateY(0)}}
+  .sub{font-family:'Dancing Script',var(--serif-en);font-size:12px;font-weight:500;color:var(--gold-deep);letter-spacing:.34em;line-height:1.2;opacity:.5;animation:subFade 1.7s ease both .5s}
+  @keyframes subFade{from{opacity:0;transform:translateY(5px)}to{opacity:.5;transform:none}}
+
+  /* 古典分隔飾線 */
+  .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0 26px}
+  .divider .line{width:46px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-border),transparent)}
+  .divider .dot{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);box-shadow:0 0 8px var(--glow);animation:dotPulse 3.6s ease-in-out infinite}
+  @keyframes dotPulse{0%,100%{box-shadow:0 0 6px var(--glow);opacity:.85}50%{box-shadow:0 0 14px var(--glow);opacity:1}}
+
+  .ring-wrap{position:relative;width:min(224px,70vw);aspect-ratio:1/1;margin:0 auto 8px;transition:transform .6s ease}
+  .ring-wrap.pulse{animation:pulse 1.8s ease}
+  @keyframes pulse{0%{transform:scale(1)}28%{transform:scale(1.045)}100%{transform:scale(1)}}
+  /* 圓環底層光暈 */
+  .ring-wrap::before{
+    content:'';position:absolute;inset:24px;border-radius:50%;
+    background:radial-gradient(circle,var(--glow),transparent 68%);
+    opacity:.35;filter:blur(6px);transition:opacity 1s ease;
+    animation:ringBreath 5s ease-in-out infinite;
+  }
+  @keyframes ringBreath{0%,100%{opacity:.28}50%{opacity:.5}}
+  .ring-wrap.glow-on::before{opacity:.85;animation:none}
+  svg{width:100%;height:100%;display:block;transform:rotate(-90deg);position:relative}
+  .ring-track{stroke:var(--ring-track)}
+  .ring-prog{
+    stroke:url(#grad);stroke-linecap:round;
+    transition:stroke-dashoffset .9s linear,filter 1s ease;
+    filter:drop-shadow(0 0 6px var(--glow));
+  }
+  .ring-wrap.glow-on .ring-prog{filter:drop-shadow(0 0 14px var(--glow))}
+  /* 流水般繞圈的流光 */
+  .ring-flow{transform-box:fill-box;transform-origin:center;animation:ringFlow 6.5s linear infinite;filter:drop-shadow(0 0 5px var(--glow))}
+  @keyframes ringFlow{to{transform:rotate(360deg)}}
+  .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3}
+
+  /* 里程碑星芒（持續 12 次） */
+  .starburst{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:2}
+  .starburst svg{
+    position:absolute;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);overflow:visible;
+    -webkit-mask:radial-gradient(circle at center,transparent 0 24%,#000 39%);
+            mask:radial-gradient(circle at center,transparent 0 24%,#000 39%);
+  }
+  .sb-rays,.sb-bloom,.sb-wave{transform-box:fill-box;transform-origin:center}
+  .starburst.play{animation:sbFade 3.8s ease-out forwards}
+  @keyframes sbFade{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
+  .starburst.play .sb-rays{animation:sbRays 3.8s cubic-bezier(.16,.7,.3,1) forwards}
+  @keyframes sbRays{0%{transform:scale(.35) rotate(-14deg);opacity:0}20%{opacity:1}100%{transform:scale(1.12) rotate(10deg);opacity:0}}
+  .starburst.play .sb-bloom{animation:sbBloom 3.8s ease-out forwards}
+  @keyframes sbBloom{0%{transform:scale(.3);opacity:0}22%{opacity:.85}100%{transform:scale(1.5);opacity:0}}
+  .starburst.play .sb-wave{animation:sbWave 3.8s ease-out forwards}
+  @keyframes sbWave{0%{transform:scale(.5);opacity:0}18%{opacity:.7}100%{transform:scale(1.55);opacity:0}}
+  .time{
+    font-family:var(--serif-en);font-size:60px;font-weight:500;line-height:1;
+    letter-spacing:.01em;font-variant-numeric:tabular-nums;
+    text-shadow:0 0 22px var(--glow);
+  }
+  .state{font-family:var(--serif);font-size:11px;color:var(--text-2);margin-top:8px;letter-spacing:.22em}
+
+  /* 三層小字層級：註記（最小）< 狀態（中）< 動作（最重） */
+  .interval-note{font-family:var(--serif);font-size:10.5px;color:var(--text-3);letter-spacing:.22em;margin:14px 0 7px;opacity:.85}
+  .rest-count{font-family:var(--serif);font-size:11.5px;color:var(--gold-deep);letter-spacing:.16em;margin:0 0 18px;transition:color .4s}
+  .rest-count .rc-star{color:var(--gold);margin-left:4px}
+  .move-tip{margin:0 auto 22px;max-width:288px}
+  .move-tip .mt-label{display:block;font-family:var(--serif);font-size:10px;color:var(--gold-deep);letter-spacing:.28em;margin-bottom:7px;opacity:.85}
+  .move-tip .mt-text{font-family:var(--serif);font-size:14.5px;font-weight:500;line-height:1.6;color:var(--brown-deep);letter-spacing:.04em}
+  .move-tip.upd{animation:moveIn .9s ease}
+  @keyframes moveIn{from{opacity:.25}to{opacity:1}}
+
+  .toggle{
+    border:none;cursor:pointer;
+    padding:14px 52px;border-radius:40px;
+    font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:.22em;
+    color:#fdf8f1;background:linear-gradient(135deg,rgba(120,82,50,.54),rgba(92,60,34,.66));
+    box-shadow:0 12px 26px -12px var(--gold-deep),0 0 22px -4px var(--glow);
+    transition:transform .25s ease,box-shadow .35s ease;
+    animation:fadeSeq .9s ease both 1s, btnGlow 3.4s ease-in-out infinite;
+  }
+  @keyframes btnGlow{
+    0%,100%{box-shadow:0 12px 26px -12px var(--gold-deep),0 0 18px -4px var(--glow)}
+    50%{box-shadow:0 12px 26px -12px var(--gold-deep),0 0 34px -2px var(--glow)}
+  }
+  @media (hover:hover){.toggle:hover{transform:translateY(-2px);box-shadow:0 16px 32px -12px var(--gold-deep),0 0 38px -2px var(--glow)}}
+  .toggle:active{transform:translateY(0)}
+  .toggle.off{
+    background:linear-gradient(135deg,rgba(72,44,22,.46),rgba(50,31,16,.6));
+    --glow:rgba(220,186,138,.62);
+    --gold-deep:#b58e5b;
+  }
+
+  .label{font-family:var(--serif);font-size:11px;color:var(--text-3);letter-spacing:.2em;margin:28px 0 14px}
+  .sounds{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+  .sounds button{
+    border:1px solid var(--gold-border);background:transparent;
+    color:var(--text-2);cursor:pointer;
+    padding:7px 14px;border-radius:11px;font-family:var(--serif);font-size:12.5px;letter-spacing:.08em;
+    transition:background .2s,color .2s,border-color .2s,box-shadow .25s;
+  }
+  .sounds button.active{
+    background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;
+  }
+  @media (hover:hover){.sounds button:hover{color:var(--gold-deep)}}
+
+  .vol-row{display:flex;align-items:center;gap:12px;justify-content:center;padding:0 8px;max-width:280px;margin:0 auto}
+  .vol-icon{font-size:14px;color:var(--gold-deep);text-shadow:0 0 8px var(--glow);flex-shrink:0}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:4px;border-radius:3px;cursor:pointer;background:var(--ring-track);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:16px;height:16px;border-radius:50%;
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep));
+    box-shadow:0 0 12px -1px var(--glow),0 2px 4px rgba(120,90,55,.3);
+    border:2px solid #fff;cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px;height:16px;border-radius:50%;border:2px solid #fff;
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep));
+    box-shadow:0 0 12px -1px var(--glow),0 2px 4px rgba(120,90,55,.3);cursor:pointer;
+  }
+  input[type=range]::-moz-range-track{height:4px;border-radius:3px;background:var(--ring-track)}
+
+  .share-btn{
+    display:block;margin:18px auto 0;border:none;background:transparent;cursor:pointer;
+    font-family:var(--serif);font-size:12px;letter-spacing:.12em;color:var(--text-2);
+    padding:6px 10px;border-radius:10px;transition:color .25s,background .25s;
+  }
+  .share-btn::before{content:'';display:inline-block;width:13px;height:13px;margin-right:7px;vertical-align:-2px;
+    background:currentColor;-webkit-mask:no-repeat center/contain;mask:no-repeat center/contain;
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5' r='2.6'/%3E%3Ccircle cx='6' cy='12' r='2.6'/%3E%3Ccircle cx='18' cy='19' r='2.6'/%3E%3Cpath d='M8.3 10.7l7.4-4.3M8.3 13.3l7.4 4.3'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5' r='2.6'/%3E%3Ccircle cx='6' cy='12' r='2.6'/%3E%3Ccircle cx='18' cy='19' r='2.6'/%3E%3Cpath d='M8.3 10.7l7.4-4.3M8.3 13.3l7.4 4.3'/%3E%3C/svg%3E");
+  }
+  @media (hover:hover){.share-btn:hover{color:var(--gold-deep);background:var(--gold-light)}}
+
+  .foot{margin-top:28px;font-size:10px;color:rgba(169,154,134,.8);line-height:2;letter-spacing:.05em}
+  .brand{font-family:'Dancing Script',var(--serif-en);font-size:16px;font-weight:600;color:var(--gold-deep);opacity:.5;text-align:center;letter-spacing:.02em;margin-top:14px}
+  .foot a{color:var(--gold-deep);cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold-border)}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  /* ---------- 設定面板 ---------- */
+  .gear{
+    position:absolute;top:13px;right:14px;z-index:6;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px 6px 10px;border:1px solid var(--gold-border);border-radius:20px;
+    background:rgba(184,146,74,.07);color:var(--gold-deep);cursor:pointer;opacity:.9;
+    box-shadow:0 0 14px -8px var(--glow);
+    transition:opacity .25s,background .25s,box-shadow .3s;
+  }
+  .gear svg{transition:transform .6s ease}
+  .gear{white-space:nowrap}
+  .gear-label{font-family:var(--serif);font-size:11.5px;letter-spacing:.14em;line-height:1;white-space:nowrap}
+  @media (hover:hover){.gear:hover{opacity:1;background:var(--gold-light);box-shadow:0 0 16px -5px var(--glow)}.gear:hover svg{transform:rotate(45deg)}}
+  .settings{
+    position:absolute;inset:0;z-index:7;border-radius:26px;
+    background:rgba(249,244,237,.988);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    display:flex;align-items:center;justify-content:center;padding:34px 32px;
+    opacity:0;visibility:hidden;transform:scale(.98);
+    transition:opacity .4s ease,transform .4s cubic-bezier(.22,.61,.36,1),visibility .4s;
+  }
+  .settings.open{opacity:1;visibility:visible;transform:scale(1)}
+  .settings-inner{width:100%}
+  .settings-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .settings-title{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:.12em;color:var(--brown-deep)}
+  .settings-close{border:none;background:transparent;font-size:24px;line-height:1;color:var(--text-2);cursor:pointer;padding:2px 6px;border-radius:8px;transition:color .2s}
+  @media (hover:hover){.settings-close:hover{color:var(--gold-deep)}}
+  .set-label{font-family:var(--serif);font-size:11px;color:var(--text-3);letter-spacing:.2em;margin:24px 0 12px}
+  .repeat-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:248px;margin:0 auto}
+  .repeat-opts button{
+    width:100%;text-align:center;
+    border:1px solid var(--gold-border);background:transparent;color:var(--text-2);cursor:pointer;
+    padding:11px 0;border-radius:12px;font-family:var(--serif);font-size:12.5px;letter-spacing:.1em;
+    transition:background .2s,color .2s,border-color .2s,box-shadow .25s,transform .2s;
+  }
+  .repeat-opts button.active{background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;box-shadow:0 0 14px -3px var(--glow)}
+  @media (hover:hover){.repeat-opts button:hover{transform:translateY(-1px)}}
+
+  /* ---------- 背景：晨→夜照片緩慢交叉淡入（低彩度、霧白漸層） ---------- */
+  .bgshow{position:fixed;inset:0;z-index:0;overflow:hidden}
+  .bg-slide{
+    position:absolute;inset:0;background-size:cover;background-position:center;
+    opacity:0;transition:opacity 2.6s ease;
+    filter:saturate(.7) brightness(1.04) sepia(.06);transform:scale(1.05);
+  }
+  /* 緩慢平移縮放（Ken Burns）讓背景活起來——只有目前顯示的那張會動 */
+  .bg-slide.on{opacity:1;animation:kenburns 22s ease-in-out infinite alternate}
+  @keyframes kenburns{
+    0%{transform:scale(1.08) translate(-2%,1.5%)}
+    100%{transform:scale(1.22) translate(3%,-2.5%)}
+  }
+  .bg-wash{position:absolute;inset:0;
+    background:
+      radial-gradient(120% 80% at 50% 22%, rgba(245,210,158,.1), transparent 60%),
+      radial-gradient(125% 85% at 50% 28%, rgba(250,245,237,.55), rgba(243,237,227,.84) 100%);}
+
+  /* ---------- 互動式動畫（低調內斂） ---------- */
+  body{perspective:1100px}
+  .card{z-index:1;transition:transform .35s cubic-bezier(.22,.61,.36,1),box-shadow .35s ease;transform-style:preserve-3d}
+  .card > *:not(.settings):not(.gear){position:relative;z-index:1}
+
+  /* 背景漂浮金點 */
+  .fx-motes{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .mote{
+    position:absolute;bottom:-14px;border-radius:50%;
+    background:radial-gradient(circle,rgba(216,183,138,.7),transparent 70%);
+    opacity:0;animation:moteRise linear infinite;
+  }
+  @keyframes moteRise{
+    0%{transform:translateY(0) translateX(0);opacity:0}
+    14%{opacity:.45}
+    86%{opacity:.45}
+    100%{transform:translateY(-106vh) translateX(var(--sway,14px));opacity:0}
+  }
+
+  /* 按鈕掠過的微光 */
+  .toggle{position:relative;overflow:hidden}
+  .toggle::before{
+    content:'';position:absolute;top:0;left:-70%;width:55%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);
+    transform:skewX(-18deg);transition:left .65s ease;pointer-events:none;
+  }
+  @media (hover:hover){.toggle:hover::before{left:130%}}
+
+  /* 鈴聲按鈕互動 */
+  .sounds button{transition:background .2s,color .2s,border-color .2s,box-shadow .25s,transform .2s}
+  @media (hover:hover){.sounds button:hover{transform:translateY(-1px);box-shadow:0 5px 16px -7px var(--glow)}}
+  .sounds button:active{transform:scale(.95)}
+
+  /* ---------- 鈴聲輪播 ---------- */
+  .sounds-carousel{display:flex;align-items:center;justify-content:center;gap:4px;max-width:320px;margin:0 auto}
+  .sc-viewport{overflow:hidden;flex:1}
+  .sc-track{display:flex;flex-wrap:nowrap;gap:0;justify-content:flex-start;transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+  .sc-page{flex:0 0 100%;display:flex;flex-wrap:nowrap;gap:7px;justify-content:center}
+  .sc-arrow{
+    flex-shrink:0;width:26px;height:26px;padding:0;border:none;cursor:pointer;
+    background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;
+    border-radius:50%;opacity:.55;transition:opacity .2s,background .2s,box-shadow .25s;
+  }
+  @media (hover:hover){.sc-arrow:hover{opacity:1;background:var(--gold-light);box-shadow:0 0 12px -4px var(--glow)}}
+  .sc-arrow:active{transform:scale(.92)}
+  .sc-dots{margin-top:11px}
+
+  /* ---------- 底部 CTA：可左右滑動的輪播 ---------- */
+  .cta-carousel{margin-top:28px;display:flex;align-items:center;justify-content:center;gap:6px;max-width:300px;margin-left:auto;margin-right:auto}
+  .cta-nav{flex-shrink:0;width:26px;height:26px;padding:0;border:none;background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;cursor:pointer;border-radius:50%;opacity:.5;transition:opacity .2s,background .2s}
+  @media (hover:hover){.cta-nav:hover{opacity:1;background:var(--gold-light)}}
+  .cta-viewport{position:relative;flex:1;height:44px;overflow:hidden;touch-action:pan-y}
+  .cta-slide{
+    position:absolute;top:50%;left:50%;
+    display:inline-flex;align-items:center;gap:10px;white-space:nowrap;
+    text-decoration:none;border-radius:40px;
+    border:1px solid var(--gold-border);background:transparent;
+    color:var(--gold-deep);
+    font-family:var(--serif);font-size:13px;font-weight:500;letter-spacing:.18em;
+    padding:10px 24px;
+    box-shadow:0 0 15px -7px var(--glow);
+    opacity:0;transform:translate(-50%,-50%) translateY(6px);
+    transition:opacity .6s ease,transform .6s ease,box-shadow .35s ease;pointer-events:none;
+  }
+  .cta-slide.active{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
+  .cta-arrow{font-size:12px;opacity:.75;transition:transform .35s ease}
+  @media (hover:hover){
+    .cta-slide.active:hover{transform:translate(-50%,-50%) translateY(-1px);box-shadow:0 0 24px -6px var(--glow)}
+    .cta-slide.active:hover .cta-arrow{transform:translateX(3px)}
+  }
+  .cta-hint{margin-top:8px;text-align:center;font-family:var(--serif);font-size:10px;color:var(--text-3);letter-spacing:.24em;opacity:.65}
+  .cta-dots{display:flex;gap:7px;justify-content:center;margin-top:12px}
+  .cta-dots button{
+    width:7px;height:7px;padding:0;border:none;border-radius:50%;cursor:pointer;
+    background:var(--gold-border);transition:width .35s ease,background .35s ease,box-shadow .35s ease;
+  }
+  .cta-dots button.active{width:18px;border-radius:4px;background:var(--gold);box-shadow:0 0 8px var(--glow)}
+
+  @media (prefers-reduced-motion:reduce){
+    .divider .dot,.ring-wrap::before,.toggle,.ring-flow,h1,.sub{animation:none}
+    h1{-webkit-text-fill-color:var(--brown-deep);color:var(--brown-deep)}
+  }
+  /* 手機防卡頓：關閉漂浮金點與背景平移（毛玻璃後方持續移動會逼重繪），背景照片仍依時段交替 */
+  @media (max-width:640px){
+    .fx-motes{display:none}
+    .bg-slide.on{animation:none}
+  }
+
+  @media (max-width:420px){
+    .card{padding:36px 22px 26px}
+    h1{font-size:21px}
+    .time{font-size:54px}
+  }
+</style>
+</head>
+<body>
+  <div class="bgshow" aria-hidden="true">
+    <div class="bg-slide on" style="background-image:url('pexels-afhamhmsyri-36903387.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-ryan-lee-706204269-30560139.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-sorrasfilms-14062621.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-mutecevvil-17307056.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-photoplivka-34135841.jpg')"></div>
+    <div class="bg-wash"></div>
+  </div>
+
+  <div class="card">
+    <button class="gear" id="gearBtn" aria-label="設定">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="3.1"/>
+        <path d="M12 2.4v3.1 M12 18.5v3.1 M2.4 12h3.1 M18.5 12h3.1 M5.1 5.1l2.2 2.2 M16.7 16.7l2.2 2.2 M18.9 5.1l-2.2 2.2 M7.3 16.7l-2.2 2.2"/>
+      </svg>
+      <span class="gear-label">設定</span>
+    </button>
+
+    <div class="settings" id="settings" aria-hidden="true">
+      <div class="settings-inner">
+        <div class="settings-head">
+          <span class="settings-title">設定</span>
+          <button class="settings-close" id="settingsClose" aria-label="關閉設定">×</button>
+        </div>
+        <div class="set-label">音量</div>
+        <div class="vol-row">
+          <span class="vol-icon">♪</span>
+          <input type="range" id="vol" min="0" max="100" value="70" aria-label="音量">
+        </div>
+        <div class="set-label">重複幾次</div>
+        <div class="repeat-opts" id="repeatOpts">
+          <button type="button" data-rep="0" class="active">一直提醒</button>
+          <button type="button" data-rep="4">4 次</button>
+          <button type="button" data-rep="8">8 次</button>
+          <button type="button" data-rep="12">12 次</button>
+        </div>
+      </div>
+    </div>
+
+    <h1>該起來走一走了</h1>
+    <p class="sub">Rise &amp; Roam</p>
+    <div class="divider"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
+
+    <div class="ring-wrap" id="ringWrap">
+      <svg width="100%" height="100%" viewBox="0 0 224 224" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#dcb682"/>
+            <stop offset="1" stop-color="#b88a4d"/>
+          </linearGradient>
+          <linearGradient id="flowGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(239,206,149,0)"/>
+            <stop offset="0.5" stop-color="#f3d8a0"/>
+            <stop offset="1" stop-color="rgba(239,206,149,0)"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-track" cx="112" cy="112" r="100" fill="none" stroke-width="10"/>
+        <circle class="ring-prog" id="prog" cx="112" cy="112" r="100" fill="none" stroke-width="10"
+                stroke-dasharray="628.3" stroke-dashoffset="0"/>
+        <circle class="ring-flow" cx="112" cy="112" r="100" fill="none" stroke="url(#flowGrad)"
+                stroke-width="4.5" stroke-linecap="round" stroke-dasharray="150 478"/>
+      </svg>
+      <div class="starburst" id="starburst" aria-hidden="true">
+        <svg viewBox="0 0 224 224" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="sbRay" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f5e6c6"/>
+              <stop offset="1" stop-color="#cda674"/>
+            </linearGradient>
+            <radialGradient id="sbGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="rgba(216,184,140,.6)"/>
+              <stop offset="55%" stop-color="rgba(206,164,102,.2)"/>
+              <stop offset="100%" stop-color="rgba(206,164,102,0)"/>
+            </radialGradient>
+            <polygon id="sbL" points="112,112 114.6,46 112,4 109.4,46" fill="url(#sbRay)"/>
+            <polygon id="sbS" points="112,112 113.6,72 112,52 110.4,72" fill="url(#sbRay)"/>
+          </defs>
+          <circle class="sb-bloom" cx="112" cy="112" r="88" fill="url(#sbGlow)"/>
+          <circle class="sb-wave" cx="112" cy="112" r="62" fill="none" stroke="rgba(206,164,102,.5)" stroke-width="1.5"/>
+          <g class="sb-rays">
+            <use href="#sbL"/>
+            <use href="#sbL" transform="rotate(90 112 112)"/>
+            <use href="#sbL" transform="rotate(180 112 112)"/>
+            <use href="#sbL" transform="rotate(270 112 112)"/>
+            <use href="#sbS" transform="rotate(45 112 112)"/>
+            <use href="#sbS" transform="rotate(135 112 112)"/>
+            <use href="#sbS" transform="rotate(225 112 112)"/>
+            <use href="#sbS" transform="rotate(315 112 112)"/>
+          </g>
+        </svg>
+      </div>
+      <div class="center">
+        <div class="time" id="time">25:00</div>
+        <div class="state" id="state">已暫停</div>
+      </div>
+    </div>
+
+    <p class="interval-note">每 25 分鐘 · 提醒一次</p>
+    <p class="rest-count" id="restCount"></p>
+    <p class="move-tip" id="moveTip"></p>
+
+    <button class="toggle off" id="toggle">開始提醒</button>
+
+    <div class="label">鈴聲 · 點一下可試聽</div>
+    <div class="sounds-carousel" id="soundsCarousel">
+      <button type="button" class="sc-arrow" id="scPrev" aria-label="上一組">‹</button>
+      <div class="sc-viewport">
+        <div class="sounds sc-track" id="sounds">
+          <button data-sound="auto" class="active">自動輪流</button>
+          <button data-sound="bell">鐘聲</button>
+          <button data-sound="wind">風鈴</button>
+          <button data-sound="piano">鋼琴</button>
+          <button data-sound="bowl">頌缽</button>
+          <button data-sound="drop">水滴</button>
+          <button data-sound="birds">鳥鳴</button>
+          <button data-sound="rain">雨聲</button>
+          <button data-sound="ocean">海浪</button>
+          <button data-sound="stream">溪流</button>
+          <button data-sound="night">蟲鳴</button>
+        </div>
+      </div>
+      <button type="button" class="sc-arrow" id="scNext" aria-label="下一組">›</button>
+    </div>
+    <div class="cta-dots sc-dots" id="soundsDots"></div>
+
+    <div class="cta-carousel" id="ctaCarousel">
+      <button type="button" class="cta-nav" id="ctaPrev" aria-label="上一個">‹</button>
+      <div class="cta-viewport" id="ctaViewport">
+        <a class="cta-slide active" href="https://www.instagram.com/hannahchen0505949/" target="_blank" rel="noopener noreferrer">
+          <span class="cta-label">認識開發者青青</span><span class="cta-arrow">→</span>
+        </a>
+        <a class="cta-slide" href="https://line.me/ti/g2/PwykU3Dg-k8k6Lnwj-swf5nsSwm4to0a6HFQLg?utm_source=invitation&amp;utm_medium=link_copy&amp;utm_campaign=default" target="_blank" rel="noopener noreferrer">
+          <span class="cta-label">歡迎加入初星群</span><span class="cta-arrow">→</span>
+        </a>
+      </div>
+      <button type="button" class="cta-nav" id="ctaNext" aria-label="下一個">›</button>
+    </div>
+    <div class="cta-hint">← 左右滑動 →</div>
+
+    <button class="share-btn" id="shareBtn">分享</button>
+
+    <p class="foot">
+      鈴響時會跳桌面通知。<a id="notiBtn">開啟桌面通知</a><br>
+      提示：把這個分頁固定、別關掉就會持續提醒。
+    </p>
+  </div>
+
+<script>
+(function(){
+  const R = 100, CIRC = 2 * Math.PI * R;
+  const INTERVAL_MIN = 25;
+  const totalMs = INTERVAL_MIN * 60 * 1000;
+  const prog = document.getElementById('prog');
+  const timeEl = document.getElementById('time');
+  const stateEl = document.getElementById('state');
+  const toggle = document.getElementById('toggle');
+  const sounds = document.getElementById('sounds');
+  const notiBtn = document.getElementById('notiBtn');
+  const ringWrap = document.getElementById('ringWrap');
+  const volEl = document.getElementById('vol');
+  prog.style.strokeDasharray = CIRC;
+
+  const STORAGE_KEY = 'rest-reminder-settings';
+  function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; } }
+  const saved = loadState();
+  let soundMode = saved.soundMode || 'auto';
+  let volume = (typeof saved.volume === 'number') ? saved.volume : 70;  // 0~100
+  let repeat = (typeof saved.repeat === 'number') ? saved.repeat : 0;   // 0 = 一直提醒
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ soundMode:soundMode, volume:volume, repeat:repeat })); }
+
+  // 每日完成週期計數（持續 12 次綻放星芒）
+  const CYCLES_KEY = 'rest-reminder-cycles';
+  const MILESTONE = 12;
+  function todayStr(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  let cycleData = (function(){ try{ return JSON.parse(localStorage.getItem(CYCLES_KEY)) || {}; }catch(e){ return {}; } })();
+  if(cycleData.date !== todayStr()) cycleData = { date: todayStr(), count: 0 };
+  function saveCycles(){ cycleData.date = todayStr(); localStorage.setItem(CYCLES_KEY, JSON.stringify(cycleData)); }
+
+  // 今日休息次數顯示
+  const restCountEl = document.getElementById('restCount');
+  function renderRestCount(){
+    const n = cycleData.count;
+    if(n <= 0){ restCountEl.textContent = '今天還沒開始休息'; return; }
+    restCountEl.innerHTML = '今日已休息 ' + n + ' 次' + (n >= MILESTONE ? ' <span class="rc-star">✦</span>' : '');
+  }
+
+  // 久坐族的起身小動作（全部要離開椅子、動到身體），響鈴時輪流顯示
+  const MOVES = [
+    '站起來，走到窗邊看遠方 30 秒',
+    '雙手扶腰，輕輕向後仰，打開久坐縮緊的下背與胸口',
+    '扶著椅子做 5 次半蹲，喚醒下半身循環',
+    '靠牆站直、肩胛往後收，把駝背拉回來',
+    '原地抬腿踏步 20 下，促進腿部血液循環',
+    '雙手交握向上延伸，把整條脊椎往上拉長',
+    '肩膀向後緩緩繞 10 圈，鬆開緊繃的肩頸',
+    '弓箭步伸展髖部，放鬆久坐最緊的髖屈肌',
+    '走去倒一杯水，順便起身走動一下',
+    '站著左右扭轉身體 10 次，鬆開久坐僵硬的腰背'
+  ];
+  let moveIdx = 0;
+  const moveTip = document.getElementById('moveTip');
+  function renderMove(){
+    moveTip.innerHTML = '<span class="mt-text">' + MOVES[moveIdx % MOVES.length] + '</span>';
+    moveTip.classList.remove('upd'); void moveTip.offsetWidth; moveTip.classList.add('upd');
+  }
+
+  const starburst = document.getElementById('starburst');
+  function playStarburst(){
+    ringWrap.classList.add('glow-on');
+    starburst.classList.remove('play'); void starburst.offsetWidth; starburst.classList.add('play');
+    setTimeout(()=>{ starburst.classList.remove('play'); ringWrap.classList.remove('glow-on'); }, 3900);
+  }
+
+  const soundBtns = [...sounds.querySelectorAll('button')];
+  soundBtns.forEach(b=>b.classList.toggle('active', b.dataset.sound===soundMode));
+
+  // 還原音量並畫出填充
+  volEl.value = volume;
+  function paintVol(){
+    volEl.style.background = 'linear-gradient(90deg,var(--gold) ' + volume + '%,var(--ring-track) ' + volume + '%)';
+  }
+  paintVol();
+  volEl.addEventListener('input', ()=>{
+    volume = parseInt(volEl.value,10);
+    if(masterGain) masterGain.gain.value = volume/100;
+    paintVol(); saveState();
+  });
+  volEl.addEventListener('change', ()=>{ primeAudio(); playSound(soundMode==='auto' ? SOUND_LIST[autoIndex % SOUND_LIST.length] : soundMode); });
+
+  let endTime = 0, running = false, tick = null, cyclesRun = 0;
+
+  // 計時狀態持久化（重整／意外關閉後可接續）
+  const SESSION_KEY = 'rest-reminder-session';
+  function saveSession(){
+    try{ localStorage.setItem(SESSION_KEY, JSON.stringify({ running:running, endTime:endTime, cyclesRun:cyclesRun, moveIdx:moveIdx })); }catch(e){}
+  }
+
+  function fmt(ms){
+    if(ms < 0) ms = 0;
+    const s = Math.round(ms/1000);
+    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+  }
+
+  function render(){
+    const remain = endTime - Date.now();
+    timeEl.textContent = fmt(remain);
+    if(running) document.title = fmt(remain) + ' · Rise & Roam';
+    const frac = Math.max(0, Math.min(1, remain / totalMs));
+    prog.style.strokeDashoffset = CIRC * (1 - frac);
+    if(remain <= 0 && running){
+      ringBell();
+      // 計數一次完成的週期、換下一個起身小動作、發通知
+      cycleData.count++; saveCycles(); renderRestCount();
+      moveIdx++; renderMove();
+      notify(MOVES[moveIdx % MOVES.length]);
+      ringWrap.classList.remove('pulse'); void ringWrap.offsetWidth; ringWrap.classList.add('pulse');
+      ringWrap.classList.add('glow-on');
+      setTimeout(()=>ringWrap.classList.remove('glow-on'), 2600);
+      if(cycleData.count % MILESTONE === 0){ playStarburst(); }
+      // 重複次數上限：達到後自動停止
+      cyclesRun++;
+      if(repeat > 0 && cyclesRun >= repeat){
+        running = false;
+        toggle.textContent = '開始提醒'; toggle.classList.add('off');
+        stateEl.textContent = '已完成 ' + repeat + ' 次';
+        timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
+        document.title = 'Rise & Roam · 起來走一走';
+      } else {
+        endTime = Date.now() + totalMs;
+      }
+      saveSession();
+    }
+  }
+  function loop(){ render(); tick = setTimeout(function f(){ render(); if(running) tick = setTimeout(f, 250); }, 250); }
+
+  function start(){
+    running = true; cyclesRun = 0; endTime = Date.now() + totalMs;
+    toggle.textContent = '暫停提醒'; toggle.classList.remove('off');
+    stateEl.textContent = '提醒中';
+    // 第一次開始時，順手請求桌面通知權限（背景也能提醒到）
+    if('Notification' in window && Notification.permission === 'default'){
+      try{ Notification.requestPermission().then(function(p){ if(p==='granted'){ notiBtn.textContent='桌面通知已開啟 ✓'; } }); }catch(e){}
+    }
+    saveSession();
+    if(tick) clearTimeout(tick); loop();
+  }
+  function stop(){
+    running = false; if(tick) clearTimeout(tick);
+    toggle.textContent = '開始提醒'; toggle.classList.add('off');
+    stateEl.textContent = '已暫停';
+    timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
+    document.title = 'Rise & Roam · 起來走一走';
+    ringWrap.classList.remove('glow-on');
+    saveSession();
+  }
+  toggle.addEventListener('click', ()=>{ primeAudio(); running ? stop() : start(); });
+
+  sounds.addEventListener('click', (e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    soundBtns.forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    soundMode = b.dataset.sound; saveState(); primeAudio();
+    if(soundMode === 'auto'){ playSound(SOUND_LIST[autoIndex % SOUND_LIST.length]); }
+    else { playSound(soundMode); }
+  });
+
+  /* ---------- Web Audio 合成鈴聲（不需音檔、零外連） ---------- */
+  let audioCtx = null, masterGain = null, noiseBuffer = null;
+  function primeAudio(){
+    if(!audioCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = volume/100;
+      masterGain.connect(audioCtx.destination);
+      // 預先產生 2 秒白噪音，給大自然聲音用
+      const len = audioCtx.sampleRate * 2;
+      noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const d = noiseBuffer.getChannelData(0);
+      for(let i=0;i<len;i++) d[i] = Math.random()*2 - 1;
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  // 以濾波白噪音模擬大自然聲（雨、海浪、溪流等）
+  function noiseTone(opt){
+    const t0 = audioCtx.currentTime + (opt.start||0);
+    const src = audioCtx.createBufferSource();
+    src.buffer = noiseBuffer; src.loop = true;
+    let node = src;
+    if(opt.hp){ const f=audioCtx.createBiquadFilter(); f.type='highpass'; f.frequency.value=opt.hp; node.connect(f); node=f; }
+    if(opt.bp){ const f=audioCtx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=opt.bp; f.Q.value=opt.q||1; node.connect(f); node=f; }
+    if(opt.lp){ const f=audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=opt.lp; node.connect(f); node=f; }
+    const g = audioCtx.createGain();
+    node.connect(g); g.connect(masterGain);
+    const v = opt.vol||0.2, atk = opt.attack||0.3, rel = opt.release||0.6;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(v, t0 + atk);
+    g.gain.setValueAtTime(v, t0 + Math.max(atk, opt.dur - rel));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + opt.dur);
+    src.start(t0); src.stop(t0 + opt.dur + 0.1);
+  }
+  // 鳥鳴：一聲含數個快速上揚音節
+  function chirp(base, start){
+    const syl = 2 + Math.floor(Math.random()*2);
+    for(let k=0;k<syl;k++){
+      tone({freq:base, glideTo:base*1.45, start:start + k*0.09, dur:0.07, vol:.16, type:'sine', attack:.006});
+    }
+  }
+  function tone(opt){
+    const t0 = audioCtx.currentTime + (opt.start||0);
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = opt.type || 'sine';
+    o.frequency.setValueAtTime(opt.freq, t0);
+    if(opt.glideTo){ o.frequency.exponentialRampToValueAtTime(opt.glideTo, t0 + opt.dur); }
+    let node = o;
+    if(opt.lp){ const f = audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value = opt.lp; o.connect(f); node = f; }
+    node.connect(g); g.connect(masterGain);
+    const v = opt.vol || 0.2;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(v, t0 + (opt.attack||0.04));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + opt.dur);
+    o.start(t0); o.stop(t0 + opt.dur + 0.1);
+  }
+
+  const SOUND_LIST = ['bell','wind','piano','bowl','drop','birds','rain','ocean','stream','night'];
+  const SOUNDS = {
+    bell(){
+      tone({freq:523.25,dur:1.6,vol:.22}); tone({freq:659.25,dur:1.6,vol:.13});
+      tone({freq:659.25,start:.55,dur:1.6,vol:.20}); tone({freq:783.99,start:1.1,dur:2.2,vol:.20});
+      tone({freq:1046.5,start:1.1,dur:2.2,vol:.07});
+    },
+    wind(){
+      const n=[1318.5,1567.98,1760,2093,2349.32];
+      for(let i=0;i<6;i++){ tone({freq:n[Math.floor(Math.random()*n.length)],start:i*0.18+Math.random()*0.08,dur:2.4,vol:.10}); }
+    },
+    piano(){
+      [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone({freq:f,start:i*0.22,dur:1.8,vol:.20,type:'triangle',lp:2600,attack:.01}));
+    },
+    bowl(){
+      tone({freq:220,dur:4.2,vol:.22,attack:.12}); tone({freq:221.3,dur:4.2,vol:.16,attack:.12});
+      tone({freq:660,dur:3.6,vol:.07,attack:.2}); tone({freq:880,dur:3.0,vol:.04,attack:.25});
+    },
+    drop(){
+      tone({freq:1318.5,glideTo:880,dur:0.5,vol:.18,attack:.005});
+      tone({freq:1046.5,glideTo:740,start:.32,dur:0.7,vol:.14,attack:.005});
+      tone({freq:880,start:.7,dur:1.6,vol:.10});
+    },
+    // ---- 大自然聲音 ----
+    birds(){
+      noiseTone({dur:3.4,vol:.025,bp:3500,q:.6,attack:.5,release:1.0}); // 微弱林間底噪
+      const n=5;
+      for(let i=0;i<n;i++){ chirp(2200+Math.random()*1600, i*0.5+Math.random()*0.2); }
+    },
+    rain(){
+      noiseTone({dur:4.2,vol:.16,hp:1100,lp:7500,attack:.6,release:1.2});
+      // 幾滴清脆水珠點綴
+      for(let i=0;i<4;i++){ tone({freq:1600+Math.random()*900,glideTo:700,start:0.6+i*0.7,dur:0.18,vol:.05,attack:.004}); }
+    },
+    ocean(){
+      // 三道緩緩起落的海浪
+      for(let i=0;i<3;i++){ noiseTone({start:i*1.5,dur:2.2,vol:.24,lp:560,attack:.8,release:1.1}); }
+    },
+    stream(){
+      noiseTone({dur:4.0,vol:.14,bp:2600,q:.7,attack:.5,release:1.0});
+      noiseTone({dur:4.0,vol:.06,bp:4300,q:1.1,attack:.5,release:1.0});
+      // 細微汩汩水泡
+      for(let i=0;i<5;i++){ tone({freq:900+Math.random()*500,glideTo:600,start:Math.random()*3.2,dur:0.12,vol:.03,attack:.004}); }
+    },
+    night(){
+      noiseTone({dur:4.6,vol:.022,hp:1400,lp:3600,attack:.8,release:1.4}); // 夜的柔和底噪
+      // 溫和的蟲鳴：三角波＋低通，每聲含細微顫音，節奏略有變化
+      for(let i=0;i<8;i++){
+        const s = i*0.5 + (Math.random()*0.06-0.03);
+        tone({freq:2640,glideTo:2680,start:s,dur:0.14,vol:.04,type:'triangle',lp:3200,attack:.02});
+        tone({freq:2640,glideTo:2680,start:s+0.16,dur:0.12,vol:.03,type:'triangle',lp:3200,attack:.02});
+      }
+    }
+  };
+  let autoIndex = 0;
+  function playSound(name){
+    if(!audioCtx) primeAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    (SOUNDS[name] || SOUNDS.bell)();
+  }
+  function ringBell(){
+    if(soundMode === 'auto'){ playSound(SOUND_LIST[autoIndex % SOUND_LIST.length]); autoIndex++; }
+    else { playSound(soundMode); }
+  }
+
+  /* ---------- 桌面通知 ---------- */
+  function notify(move){
+    if('Notification' in window && Notification.permission === 'granted'){
+      try{
+        new Notification('該起來走一走囉', {
+          body: move || '起來動一動，照顧好久坐的身體。',
+          requireInteraction: true,        // 通知停留不自動消失，確保看得到
+          silent: !document.hidden         // 前景靠合成鈴聲、背景用系統通知音
+        });
+      }catch(e){}
+    }
+  }
+  notiBtn.addEventListener('click', ()=>{
+    if(!('Notification' in window)){ notiBtn.textContent='此瀏覽器不支援通知'; return; }
+    Notification.requestPermission().then(p=>{ notiBtn.textContent = p==='granted' ? '桌面通知已開啟 ✓' : '通知未開啟'; });
+  });
+  if('Notification' in window && Notification.permission === 'granted'){ notiBtn.textContent = '桌面通知已開啟 ✓'; }
+
+  timeEl.textContent = fmt(totalMs);
+  renderRestCount();
+  renderMove();
+
+  // 重整／意外關閉後自動接續計時（若先前在計時且尚未到期）
+  (function resumeSession(){
+    try{
+      const ss = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      if(ss && ss.running && typeof ss.endTime === 'number' && ss.endTime > Date.now()){
+        endTime = ss.endTime;
+        cyclesRun = ss.cyclesRun || 0;
+        moveIdx = ss.moveIdx || 0;
+        running = true;
+        toggle.textContent = '暫停提醒'; toggle.classList.remove('off');
+        stateEl.textContent = '提醒中';
+        renderMove();
+        loop();
+      }
+    }catch(e){}
+  })();
+
+  // 背景：依台灣真實時段挑對應照片（每 15 分檢查、跨時段柔和淡入）
+  (function(){
+    const slides = [...document.querySelectorAll('.bg-slide')];
+    if(slides.length < 5) return;
+    function taiwanHour(){
+      try{
+        const h = parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hour12:false,hourCycle:'h23'}).format(new Date()),10);
+        return isNaN(h) ? new Date().getHours() : (h % 24);
+      }catch(e){ return new Date().getHours(); }
+    }
+    function bgIndexForHour(h){
+      if(h>=5 && h<8) return 0;    // 清晨：湖泊晨景
+      if(h>=8 && h<11) return 1;   // 上午：霧林晨光
+      if(h>=11 && h<14) return 2;  // 中午：綠草白花
+      if(h>=14 && h<17) return 3;  // 下午：蕨葉濃綠
+      return 4;                    // 傍晚～深夜：白花夕照
+    }
+    function applyTimeBg(){
+      const idx = bgIndexForHour(taiwanHour());
+      slides.forEach((s,i)=> s.classList.toggle('on', i===idx));
+    }
+    applyTimeBg();
+    setInterval(applyTimeBg, 15*60*1000);
+  })();
+
+  // 分享給朋友（手機叫出系統分享，桌面複製連結）
+  const shareBtn = document.getElementById('shareBtn');
+  const SHARE_DEFAULT = '分享';
+  shareBtn.addEventListener('click', async ()=>{
+    const url = location.href.split('?')[0];
+    const data = { title:'Rise & Roam · 起來走一走', text:'每 25 分鐘溫柔提醒你起身走動，走走、喘口氣。', url:url };
+    if(navigator.share){
+      try{ await navigator.share(data); }catch(e){}
+      return;
+    }
+    try{
+      await navigator.clipboard.writeText(url);
+      shareBtn.textContent = '已複製連結 ✓';
+    }catch(e){
+      shareBtn.textContent = '請手動複製網址列';
+    }
+    setTimeout(()=>{ shareBtn.textContent = SHARE_DEFAULT; }, 2500);
+  });
+
+  /* ---------- 互動式動畫 ---------- */
+  const card = document.querySelector('.card');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(!reduce){
+    // 卡片微傾斜視差（進場動畫結束後才啟用）
+    let tiltOn = false;
+    setTimeout(()=>{ tiltOn = true; }, 1400);
+    card.addEventListener('pointermove', (e)=>{
+      if(!tiltOn) return;
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = 'rotateX(' + (-py*2.6).toFixed(2) + 'deg) rotateY(' + (px*2.6).toFixed(2) + 'deg)';
+    });
+    card.addEventListener('pointerleave', ()=>{ card.style.transform = 'rotateX(0deg) rotateY(0deg)'; });
+
+    // 背景漂浮金點
+    const motes = document.createElement('div'); motes.className = 'fx-motes';
+    for(let i=0;i<12;i++){
+      const m = document.createElement('span'); m.className = 'mote';
+      const size = 3 + Math.random()*5;
+      m.style.left = (Math.random()*100) + '%';
+      m.style.width = m.style.height = size.toFixed(1) + 'px';
+      m.style.animationDuration = (11 + Math.random()*10).toFixed(1) + 's';
+      m.style.animationDelay = (-Math.random()*16).toFixed(1) + 's';
+      m.style.setProperty('--sway', (Math.random()*44 - 22).toFixed(0) + 'px');
+      motes.appendChild(m);
+    }
+    document.body.prepend(motes);
+  }
+
+  /* ---------- 設定面板 ---------- */
+  const settings = document.getElementById('settings');
+  const gearBtn = document.getElementById('gearBtn');
+  const settingsClose = document.getElementById('settingsClose');
+  function openSettings(){ settings.classList.add('open'); settings.setAttribute('aria-hidden','false'); }
+  function closeSettings(){ settings.classList.remove('open'); settings.setAttribute('aria-hidden','true'); }
+  gearBtn.addEventListener('click', openSettings);
+  settingsClose.addEventListener('click', closeSettings);
+  settings.addEventListener('click', (e)=>{ if(e.target === settings) closeSettings(); });
+
+  const repeatOpts = document.getElementById('repeatOpts');
+  [...repeatOpts.children].forEach(b=> b.classList.toggle('active', parseInt(b.dataset.rep,10) === repeat));
+  repeatOpts.addEventListener('click', (e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...repeatOpts.children].forEach(x=> x.classList.remove('active'));
+    b.classList.add('active');
+    repeat = parseInt(b.dataset.rep, 10); saveState();
+    if(running) cyclesRun = 0;  // 重新計算重複次數
+  });
+
+  /* ---------- 鈴聲輪播 ---------- */
+  (function(){
+    const PER = 3;
+    const scPages = [];
+    for(let i=0;i<soundBtns.length;i+=PER){
+      const page = document.createElement('div'); page.className = 'sc-page';
+      soundBtns.slice(i, i+PER).forEach(b=> page.appendChild(b));
+      sounds.appendChild(page); scPages.push(page);
+    }
+    const dotsBox = document.getElementById('soundsDots');
+    scPages.forEach((_,k)=>{
+      const d = document.createElement('button'); d.type='button';
+      d.setAttribute('aria-label','第 '+(k+1)+' 組聲音');
+      if(k===0) d.className='active';
+      dotsBox.appendChild(d);
+    });
+    const scDots = [...dotsBox.children];
+    let scIdx = 0, scTimer = null;
+    function scGo(i){
+      scIdx = (i + scPages.length) % scPages.length;
+      sounds.style.transform = 'translateX(-' + (scIdx*100) + '%)';
+      scDots.forEach((d,k)=> d.classList.toggle('active', k===scIdx));
+    }
+    function scStart(){ scStop(); scTimer = setInterval(()=> scGo(scIdx+1), 5000); }
+    function scStop(){ if(scTimer){ clearInterval(scTimer); scTimer = null; } }
+    document.getElementById('scPrev').addEventListener('click', ()=>{ scGo(scIdx-1); scStart(); });
+    document.getElementById('scNext').addEventListener('click', ()=>{ scGo(scIdx+1); scStart(); });
+    scDots.forEach((d,k)=> d.addEventListener('click', ()=>{ scGo(k); scStart(); }));
+    const sc = document.getElementById('soundsCarousel');
+    sc.addEventListener('pointerenter', scStop);
+    sc.addEventListener('pointerleave', scStart);
+    // 載入時跳到目前選中聲音所在的頁
+    const ai = soundBtns.findIndex(b=> b.dataset.sound === soundMode);
+    scGo(ai >= 0 ? Math.floor(ai/PER) : 0);
+    scStart();
+  })();
+
+  /* ---------- 底部 CTA 輪播（箭頭＋觸控滑動＋緩慢自動切換） ---------- */
+  (function(){
+    const ctaSlides = [...document.querySelectorAll('.cta-slide')];
+    if(ctaSlides.length < 2) return;
+    let ci = 0, ctaTimer = null;
+    function showCta(i){ ci = (i + ctaSlides.length) % ctaSlides.length; ctaSlides.forEach((s,k)=> s.classList.toggle('active', k===ci)); }
+    function startCta(){ stopCta(); ctaTimer = setInterval(()=> showCta(ci+1), 6000); }
+    function stopCta(){ if(ctaTimer){ clearInterval(ctaTimer); ctaTimer = null; } }
+    document.getElementById('ctaPrev').addEventListener('click', ()=>{ showCta(ci-1); startCta(); });
+    document.getElementById('ctaNext').addEventListener('click', ()=>{ showCta(ci+1); startCta(); });
+    const vp = document.getElementById('ctaViewport');
+    let sx = 0;
+    vp.addEventListener('touchstart', (e)=>{ sx = e.touches[0].clientX; }, {passive:true});
+    vp.addEventListener('touchend', (e)=>{ const dx = e.changedTouches[0].clientX - sx; if(Math.abs(dx) > 30){ showCta(ci + (dx<0?1:-1)); startCta(); } });
+    const cc = document.getElementById('ctaCarousel');
+    cc.addEventListener('pointerenter', stopCta);
+    cc.addEventListener('pointerleave', startCta);
+    showCta(0); startCta();
+  })();
+
+})();
+
+// 註冊 Service Worker（讓網站可安裝成桌面 App、可離線；僅在 http/https 下運作）
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
