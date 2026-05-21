@@ -91,7 +91,8 @@
   }
   /* 進場儀式：小巧圓環緩緩描繪＋柔光暈染，慢節奏淡出（夢幻、溫柔） */
   .intro{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
-    background:radial-gradient(70% 70% at 50% 44%,#f8f2e8,#ece1d1);
+    padding-bottom:13vh;
+    background:radial-gradient(70% 70% at 50% 40%,#f8f2e8,#ece1d1);
     animation:introOut 1.4s ease 3.2s forwards}
   .intro.hide{display:none}
   .intro-ringwrap{position:relative;display:flex;align-items:center;justify-content:center}
@@ -587,7 +588,6 @@
       <div class="sc-viewport">
         <div class="sounds sc-track" id="sounds">
           <button data-sound="auto" class="active">自動輪流</button>
-          <button data-sound="bell">鐘聲</button>
           <button data-sound="wind">風鈴</button>
           <button data-sound="piano">鋼琴</button>
           <button data-sound="bowl">頌缽</button>
@@ -597,6 +597,7 @@
           <button data-sound="ocean">海浪</button>
           <button data-sound="stream">溪流</button>
           <button data-sound="night">蟲鳴</button>
+          <button data-sound="school">下課鐘</button>
         </div>
       </div>
       <button type="button" class="sc-arrow" id="scNext" aria-label="下一組">›</button>
@@ -644,6 +645,7 @@
   function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; } }
   const saved = loadState();
   let soundMode = saved.soundMode || 'auto';
+  if(soundMode === 'bell') soundMode = 'auto';   // 「鐘聲」已移除，舊設定轉回自動輪流
   let volume = (typeof saved.volume === 'number') ? saved.volume : 70;  // 0~100
   let repeat = (typeof saved.repeat === 'number') ? saved.repeat : 0;   // 0 = 一直提醒
   let ahOn = !!saved.ahOn;                                              // 限定提醒時段
@@ -846,7 +848,7 @@
   });
 
   /* ---------- Web Audio 合成鈴聲（不需音檔、零外連） ---------- */
-  let audioCtx = null, masterGain = null, noiseBuffer = null;
+  let audioCtx = null, masterGain = null, noiseBuffer = null, reverbIn = null;
   function primeAudio(){
     if(!audioCtx){
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -859,6 +861,19 @@
       noiseBuffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
       const d = noiseBuffer.getChannelData(0);
       for(let i=0;i<len;i++) d[i] = Math.random()*2 - 1;
+      // 殘響空間（卷積殘響）：給鐘聲迴盪尾巴。脈衝＝指數衰減的立體聲噪音
+      try{
+        const rate = audioCtx.sampleRate, rlen = Math.floor(rate*3.2);
+        const ir = audioCtx.createBuffer(2, rlen, rate);
+        for(let ch=0; ch<2; ch++){
+          const a = ir.getChannelData(ch);
+          for(let i=0;i<rlen;i++){ a[i] = (Math.random()*2-1) * Math.pow(1 - i/rlen, 2.6); }
+        }
+        const conv = audioCtx.createConvolver(); conv.buffer = ir;
+        reverbIn = audioCtx.createGain();
+        const wet = audioCtx.createGain(); wet.gain.value = 0.42;  // 迴盪量（再降低）
+        reverbIn.connect(conv); conv.connect(wet); wet.connect(masterGain);
+      }catch(e){ reverbIn = null; }
     }
     if(audioCtx.state === 'suspended') audioCtx.resume();
   }
@@ -903,8 +918,97 @@
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + opt.dur);
     o.start(t0); o.stop(t0 + opt.dur + 0.1);
   }
+  // 真實鐘聲：用「不和諧泛音 + 金屬撞擊質感 + 長衰減」模擬被敲擊的金屬鐘
+  function bellStrike(freq, start, gain){
+    const t0 = audioCtx.currentTime + (start||0);
+    gain = (gain==null) ? 0.5 : gain;
+    // 本聲匯流：同時送到乾聲（masterGain）與殘響空間（reverbIn）→ 產生迴盪
+    const out = audioCtx.createGain(); out.connect(masterGain);
+    if(reverbIn) out.connect(reverbIn);
+    // 管鐘（tubular bell）泛音：低音少、八度與高泛音強 → 明亮清脆，像校園廣播
+    const partials = [
+      {r:0.50, a:0.06, d:1.6},  // 一點點嗡音墊底（大幅降低，去掉沉悶）
+      {r:1.00, a:1.00, d:2.2},  // 基音
+      {r:1.19, a:0.10, d:1.0},  // 小三度大幅淡化（去掉教堂大鐘的悲傷感）
+      {r:2.00, a:0.85, d:1.8},  // 八度：明亮的「噹」就靠它
+      {r:2.76, a:0.32, d:1.0},  // 管鐘特有的微金屬不和諧泛音
+      {r:3.00, a:0.45, d:1.1},  // 十二度，增加清澈
+      {r:4.00, a:0.30, d:0.7},  // 兩個八度，亮度
+      {r:5.40, a:0.18, d:0.45}, // 高金屬光澤
+      {r:6.80, a:0.10, d:0.3}
+    ];
+    partials.forEach(p=>{
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type='sine'; o.frequency.value = freq * p.r;
+      o.connect(g); g.connect(out);
+      const v = gain * p.a * 0.13;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(v, t0 + 0.004);   // 極快撞擊起音
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
+      o.start(t0); o.stop(t0 + p.d + 0.05);
+    });
+    // 撞擊瞬間的金屬「鏘」質感（短促帶通噪音）
+    if(noiseBuffer){
+      const src = audioCtx.createBufferSource(); src.buffer = noiseBuffer;
+      const bp = audioCtx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value = freq*4.5; bp.Q.value = 0.7;
+      const ng = audioCtx.createGain();
+      src.connect(bp); bp.connect(ng); ng.connect(out);
+      ng.gain.setValueAtTime(gain*0.09, t0);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.07);
+      src.start(t0); src.stop(t0 + 0.12);
+    }
+  }
 
-  const SOUND_LIST = ['bell','wind','piano','bowl','drop','birds','rain','ocean','stream','night'];
+  // 真實鋼琴單音：諧波列 + 微弱不諧和（弦的張力）+ 琴槌觸弦衝擊 + 高諧波先衰減
+  function pianoNote(freq, start, vel){
+    const t0 = audioCtx.currentTime + (start||0);
+    vel = (vel==null) ? 0.5 : vel;
+    const B = 0.0004;  // inharmonicity：鋼琴弦特有的微弱泛音偏移，少了它就像電子音
+    const partials = [
+      {n:1, a:1.00, d:2.8}, {n:2, a:0.52, d:2.1}, {n:3, a:0.32, d:1.6},
+      {n:4, a:0.20, d:1.2}, {n:5, a:0.13, d:0.9}, {n:6, a:0.085,d:0.7},
+      {n:7, a:0.055,d:0.55},{n:8, a:0.035,d:0.42}
+    ];
+    partials.forEach(p=>{
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type='sine';
+      o.frequency.value = freq * p.n * Math.sqrt(1 + B*p.n*p.n);
+      o.connect(g); g.connect(masterGain);
+      const v = vel * p.a * 0.16;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(v, t0 + 0.004);   // 極快琴槌起音
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
+      o.start(t0); o.stop(t0 + p.d + 0.05);
+    });
+    if(noiseBuffer){  // 琴槌觸弦那一點點木質衝擊
+      const src=audioCtx.createBufferSource(); src.buffer=noiseBuffer;
+      const lp=audioCtx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=freq*5;
+      const ng=audioCtx.createGain();
+      src.connect(lp); lp.connect(ng); ng.connect(masterGain);
+      ng.gain.setValueAtTime(vel*0.045, t0);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.035);
+      src.start(t0); src.stop(t0 + 0.07);
+    }
+  }
+  // 真實蟲鳴：窄帶噪音（高 Q 帶通）做出音色，再用快速脈衝包絡做「唧─唧─」的顫音
+  function cricket(start, freq){
+    const t0 = audioCtx.currentTime + (start||0);
+    const src = audioCtx.createBufferSource(); src.buffer = noiseBuffer; src.loop = true;
+    const bp1 = audioCtx.createBiquadFilter(); bp1.type='bandpass'; bp1.frequency.value=freq; bp1.Q.value=24;
+    const bp2 = audioCtx.createBiquadFilter(); bp2.type='bandpass'; bp2.frequency.value=freq; bp2.Q.value=24;
+    const g = audioCtx.createGain();
+    src.connect(bp1); bp1.connect(bp2); bp2.connect(g); g.connect(masterGain);
+    g.gain.setValueAtTime(0, t0);
+    const pulses = 9, pdur = 0.026, gap = 0.02; let t = t0;
+    for(let k=0;k<pulses;k++){
+      g.gain.linearRampToValueAtTime(0.06, t + 0.004);
+      g.gain.linearRampToValueAtTime(0.0001, t + pdur);
+      t += pdur + gap;
+    }
+    src.start(t0); src.stop(t + 0.1);
+  }
+
+  const SOUND_LIST = ['wind','piano','bowl','drop','birds','rain','ocean','stream','night'];
   const SOUNDS = {
     bell(){
       tone({freq:523.25,dur:1.6,vol:.22}); tone({freq:659.25,dur:1.6,vol:.13});
@@ -916,7 +1020,8 @@
       for(let i=0;i<6;i++){ tone({freq:n[Math.floor(Math.random()*n.length)],start:i*0.18+Math.random()*0.08,dur:2.4,vol:.10}); }
     },
     piano(){
-      [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone({freq:f,start:i*0.22,dur:1.8,vol:.20,type:'triangle',lp:2600,attack:.01}));
+      // 溫柔上行琶音，用真實鋼琴合成
+      [523.25,659.25,783.99,1046.5].forEach((f,i)=> pianoNote(f, i*0.26, 0.55));
     },
     bowl(){
       tone({freq:220,dur:4.2,vol:.22,attack:.12}); tone({freq:221.3,dur:4.2,vol:.16,attack:.12});
@@ -949,13 +1054,23 @@
       for(let i=0;i<5;i++){ tone({freq:900+Math.random()*500,glideTo:600,start:Math.random()*3.2,dur:0.12,vol:.03,attack:.004}); }
     },
     night(){
-      noiseTone({dur:4.6,vol:.022,hp:1400,lp:3600,attack:.8,release:1.4}); // 夜的柔和底噪
-      // 溫和的蟲鳴：三角波＋低通，每聲含細微顫音，節奏略有變化
-      for(let i=0;i<8;i++){
-        const s = i*0.5 + (Math.random()*0.06-0.03);
-        tone({freq:2640,glideTo:2680,start:s,dur:0.14,vol:.04,type:'triangle',lp:3200,attack:.02});
-        tone({freq:2640,glideTo:2680,start:s+0.16,dur:0.12,vol:.03,type:'triangle',lp:3200,attack:.02});
-      }
+      noiseTone({dur:4.6,vol:.02,hp:1400,lp:3600,attack:.8,release:1.4}); // 夜的柔和底噪
+      // 真實蟲鳴：數聲此起彼落的「唧─唧─」顫音，音高與節奏略有變化
+      for(let i=0;i<5;i++){ cricket(i*0.7 + Math.random()*0.18, 4200 + Math.random()*600); }
+    },
+    // 台灣校園下課鐘：西敏寺鐘聲（Westminster Quarters）完整四句
+    school(){
+      const E=523.25, Fs=587.33, Gs=659.25, B=392.00;  // 再降一個全音，沉穩一些
+      const phrases = [
+        [Gs, Fs, E,  B ],   // 第1句
+        [E,  Fs, Gs, E ]    // 第3句
+      ];
+      const noteGap = 0.78, phraseGap = 1.35;  // 兩句之間停頓拉長
+      let t = 0;
+      phrases.forEach(ph=>{
+        ph.forEach(f=>{ bellStrike(f, t, 0.62); t += noteGap; });
+        t += phraseGap;
+      });
     }
   };
   let autoIndex = 0;
