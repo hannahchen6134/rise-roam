@@ -603,8 +603,8 @@
           <button data-sound="auto" class="active">自動輪流</button>
           <button data-sound="school">下課鐘</button>
           <button data-sound="wind">風鈴</button>
-          <button data-sound="piano">鋼琴</button>
           <button data-sound="bowl">頌缽</button>
+          <button data-sound="muyu">木魚</button>
           <button data-sound="drop">水滴</button>
           <button data-sound="birds">鳥鳴</button>
           <button data-sound="rain">雨聲</button>
@@ -664,7 +664,7 @@
   function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; } }
   const saved = loadState();
   let soundMode = saved.soundMode || 'auto';
-  if(soundMode === 'bell') soundMode = 'auto';   // 「鐘聲」已移除，舊設定轉回自動輪流
+  if(soundMode === 'bell' || soundMode === 'piano' || soundMode === 'fire') soundMode = 'auto';   // 已移除的選項，舊設定轉回自動輪流
   let volume = (typeof saved.volume === 'number') ? saved.volume : 70;  // 0~100
   let repeat = (typeof saved.repeat === 'number') ? saved.repeat : 0;   // 0 = 一直提醒
   let ahOn = !!saved.ahOn;                                              // 限定提醒時段
@@ -999,7 +999,7 @@
       o.connect(g); g.connect(masterGain);
       const v = vel * p.a * 0.16;
       g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(v, t0 + 0.004);   // 極快琴槌起音
+      g.gain.linearRampToValueAtTime(v, t0 + 0.007);   // 起音柔一點，去掉僵硬
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + p.d);
       o.start(t0); o.stop(t0 + p.d + 0.05);
     });
@@ -1008,8 +1008,8 @@
       const lp=audioCtx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=freq*5;
       const ng=audioCtx.createGain();
       src.connect(lp); lp.connect(ng); ng.connect(masterGain);
-      ng.gain.setValueAtTime(vel*0.045, t0);
-      ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.035);
+      ng.gain.setValueAtTime(vel*0.028, t0);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.03);
       src.start(t0); src.stop(t0 + 0.07);
     }
   }
@@ -1030,8 +1030,48 @@
     }
     src.start(t0); src.stop(t + 0.1);
   }
+  // 木魚單擊：木質撞擊噪音 +「中空木腔」共鳴（起音微降音高，做出「叩」的木頭感）
+  function woodblock(start, freq, vel){
+    const t0 = audioCtx.currentTime + (start||0);
+    vel = (vel==null) ? 0.5 : vel;
+    if(noiseBuffer){  // 木棒敲下去那一下「叩」
+      const src=audioCtx.createBufferSource(); src.buffer=noiseBuffer;
+      const bp=audioCtx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq*2.1; bp.Q.value=1.1;
+      const ng=audioCtx.createGain();
+      src.connect(bp); bp.connect(ng); ng.connect(masterGain);
+      ng.gain.setValueAtTime(vel*0.5, t0);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t0+0.018);
+      src.start(t0); src.stop(t0+0.05);
+    }
+    // 中空木腔共鳴：主音 + 不諧和泛音，極快衰減
+    const partials=[{r:1.0,a:1.0,d:0.17},{r:1.61,a:0.42,d:0.10},{r:2.93,a:0.16,d:0.06}];
+    partials.forEach(function(p){
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type='sine';
+      o.frequency.setValueAtTime(freq*p.r*1.06, t0);
+      o.frequency.exponentialRampToValueAtTime(freq*p.r, t0+0.025); // 起音微降＝木頭的「叩」
+      o.connect(g); g.connect(masterGain);
+      const v=vel*p.a*0.5;
+      g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(v,t0+0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+p.d);
+      o.start(t0); o.stop(t0+p.d+0.05);
+    });
+  }
+  // 柴火單一爆裂聲：極短、明亮、隨機帶通噪音
+  function crackle(start, freq, vol){
+    const t0=audioCtx.currentTime+(start||0);
+    const src=audioCtx.createBufferSource(); src.buffer=noiseBuffer;
+    const bp=audioCtx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq; bp.Q.value=3+Math.random()*5;
+    const g=audioCtx.createGain();
+    src.connect(bp); bp.connect(g); g.connect(masterGain);
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(vol, t0+0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.012 + Math.random()*0.03);
+    src.start(t0); src.stop(t0+0.08);
+  }
 
-  const SOUND_LIST = ['wind','piano','bowl','drop','birds','rain','ocean','stream','night'];
+  const SOUND_LIST = ['wind','bowl','drop','birds','rain','ocean','stream','night','muyu'];
   const SOUNDS = {
     bell(){
       tone({freq:523.25,dur:1.6,vol:.22}); tone({freq:659.25,dur:1.6,vol:.13});
@@ -1043,8 +1083,18 @@
       for(let i=0;i<6;i++){ tone({freq:n[Math.floor(Math.random()*n.length)],start:i*0.18+Math.random()*0.08,dur:2.4,vol:.10}); }
     },
     piano(){
-      // 溫柔上行琶音，用真實鋼琴合成
-      [523.25,659.25,783.99,1046.5].forEach((f,i)=> pianoNote(f, i*0.26, 0.55));
+      // 溫柔上行琶音：低音根音當暖底 + 力度與微時間人性化，避免機械僵硬
+      const seq = [
+        {f:261.63, t:0.00, v:0.40},  // C4 根音，鋪一層暖
+        {f:329.63, t:0.30, v:0.34},  // E4
+        {f:392.00, t:0.56, v:0.44},  // G4
+        {f:523.25, t:0.85, v:0.54}   // C5 旋律最高點
+      ];
+      seq.forEach(function(n){
+        const jt = Math.max(0, n.t + (Math.random()*0.04 - 0.02));  // 微時間擺動
+        const jv = n.v * (0.88 + Math.random()*0.24);               // 力度起伏
+        pianoNote(n.f, jt, jv);
+      });
     },
     bowl(){
       tone({freq:220,dur:4.2,vol:.22,attack:.12}); tone({freq:221.3,dur:4.2,vol:.16,attack:.12});
@@ -1094,6 +1144,36 @@
         ph.forEach(f=>{ bellStrike(f, t, 0.62); t += noteGap; });
         t += phraseGap;
       });
+    },
+    // 木魚：三聲沉穩的「叩—叩—叩」，力度與音高細微變化，禪意放鬆
+    muyu(){
+      const base = 480;
+      [0, 0.52, 1.02].forEach(function(t,i){
+        const jt = t + (Math.random()*0.03 - 0.015);
+        const jf = base * (1 + (Math.random()*0.04 - 0.02));
+        woodblock(jt, jf, i===2 ? 0.62 : 0.52);  // 最後一聲略重，像收尾
+      });
+    },
+    // 柴火：低頻火焰底鳴 + 「不規則群集」的爆裂聲（多數細小、偶爾響亮、大爆裂帶餘響）
+    fire(){
+      noiseTone({dur:4.4, vol:.11, lp:430, attack:.5, release:1.1});      // 火焰低鳴
+      noiseTone({dur:4.4, vol:.05, bp:1100, q:.5, attack:.6, release:1.1}); // 中頻噗噗
+      let t = 0.05 + Math.random()*0.3;
+      while(t < 4.0){
+        const big = Math.random() > 0.85;                                  // 約 15% 是響亮爆裂
+        const vol = big ? (0.10 + Math.random()*0.10) : (0.015 + Math.random()*0.05);
+        crackle(t, 1200 + Math.random()*4000, vol);
+        // 大爆裂、或隨機 40% 機率，後面跟一小串「噼啪啪」餘響
+        if(big || Math.random() < 0.4){
+          const ticks = 1 + Math.floor(Math.random()*3);
+          let tt = t;
+          for(let k=0;k<ticks;k++){
+            tt += 0.02 + Math.random()*0.06;
+            crackle(tt, 2000 + Math.random()*3500, 0.01 + Math.random()*0.035);
+          }
+        }
+        t += 0.04 + Math.random()*0.5;                                     // 間隔不規則：時近時遠
+      }
     }
   };
   let autoIndex = 0;
