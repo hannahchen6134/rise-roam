@@ -1,0 +1,14 @@
+{
+  "name": "Rise & Roam · 起來走一走",
+  "short_name": "Rise & Roam",
+  "description": "每 25 分鐘溫柔提醒你起身，讓久坐的身體恢復柔軟與彈性。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3ede2",
+  "theme_color": "#f3ede2",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
