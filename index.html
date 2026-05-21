@@ -53,7 +53,7 @@
     --glow:rgba(206,164,102,.55);
     --brown-deep:#43301c;
     --text-2:#8a7860;
-    --text-3:#a99a86;
+    --text-3:#8d7e69;
     --bg-1:#f7f1e8;
     --bg-2:#efe5d4;
     --ring-track:#ede5d5;
@@ -143,7 +143,7 @@
   .divider .dot{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);box-shadow:0 0 8px var(--glow);animation:dotPulse 3.6s ease-in-out infinite}
   @keyframes dotPulse{0%,100%{box-shadow:0 0 6px var(--glow);opacity:.85}50%{box-shadow:0 0 14px var(--glow);opacity:1}}
 
-  .ring-wrap{position:relative;width:min(224px,70vw);aspect-ratio:1/1;margin:0 auto 8px;transition:transform .6s ease;cursor:pointer}
+  .ring-wrap{position:relative;width:min(224px,70vw);aspect-ratio:1/1;margin:0 auto 22px;transition:transform .6s ease;cursor:pointer}
   .ring-wrap.pulse{animation:pulse 1.8s ease}
   @keyframes pulse{0%{transform:scale(1)}28%{transform:scale(1.045)}100%{transform:scale(1)}}
   /* 圓環底層光暈 */
@@ -151,9 +151,9 @@
     content:'';position:absolute;inset:24px;border-radius:50%;
     background:radial-gradient(circle,var(--glow),transparent 68%);
     opacity:.35;filter:blur(6px);transition:opacity 1s ease;
-    animation:ringBreath 5s ease-in-out infinite;
+    animation:ringBreath 6s ease-in-out infinite;
   }
-  @keyframes ringBreath{0%,100%{opacity:.28}50%{opacity:.5}}
+  @keyframes ringBreath{0%,100%{opacity:.34;transform:scale(.97)}50%{opacity:.64;transform:scale(1.05)}}
   .ring-wrap.glow-on::before{opacity:.85;animation:none}
   svg{width:100%;height:100%;display:block;transform:rotate(-90deg);position:relative}
   .ring-track{stroke:var(--ring-track)}
@@ -189,17 +189,22 @@
     font-family:var(--serif-en);font-size:60px;font-weight:500;line-height:1;
     letter-spacing:.01em;font-variant-numeric:tabular-nums;
     text-shadow:0 0 22px var(--glow);
+    animation:timeGlow 5.5s ease-in-out infinite;
   }
+  @keyframes timeGlow{0%,100%{text-shadow:0 0 16px var(--glow)}50%{text-shadow:0 0 30px var(--glow)}}
+  /* 冒號光學微調：上移到視覺中心、降透明度當分隔符，讓數字當主角 */
+  .time .t-c{display:inline-block;transform:translateY(-.07em);opacity:.5;font-weight:400;margin:0 .015em}
+  .time .t-d{font-variant-numeric:tabular-nums}
   .state{font-family:var(--serif);font-size:11px;color:var(--text-2);margin-top:8px;letter-spacing:.22em}
 
   /* 三層小字層級：註記（最小）< 狀態（中）< 動作（最重） */
-  .interval-note{font-family:var(--serif);font-size:10.5px;color:var(--text-3);letter-spacing:.22em;margin:14px 0 7px;opacity:.85}
+  .interval-note{font-family:var(--serif);font-size:10.5px;color:var(--text-3);letter-spacing:.22em;margin:6px 0 7px;opacity:.85}
   .rest-count{font-family:var(--serif);font-size:11.5px;color:var(--gold-deep);letter-spacing:.16em;margin:0 0 10px;transition:color .4s}
   .day-progress{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;max-width:180px;margin:0 auto 18px}
   .dp-dot{width:5px;height:5px;border-radius:50%;background:var(--gold-border);transition:background .5s ease,box-shadow .5s ease,transform .5s ease}
   .dp-dot.on{background:var(--gold);box-shadow:0 0 6px var(--glow);transform:scale(1.15)}
   .rest-count .rc-star{color:var(--gold);margin-left:4px}
-  .move-tip{margin:0 auto 22px;max-width:288px}
+  .move-tip{margin:0 auto 32px;max-width:288px}
   .move-tip .mt-label{display:block;font-family:var(--serif);font-size:10px;color:var(--gold-deep);letter-spacing:.28em;margin-bottom:7px;opacity:.85}
   .move-tip .mt-text{font-family:var(--serif);font-size:14.5px;font-weight:500;line-height:1.6;color:var(--brown-deep);letter-spacing:.04em}
   .move-tip.upd{animation:moveIn .9s ease}
@@ -207,7 +212,7 @@
 
   .toggle{
     border:none;cursor:pointer;
-    padding:14px 52px;border-radius:40px;
+    padding:14px 40px;border-radius:40px;
     font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:.22em;
     color:#fdf8f1;background:linear-gradient(135deg,rgba(120,82,50,.54),rgba(92,60,34,.66));
     box-shadow:0 12px 26px -12px var(--gold-deep),0 0 22px -4px var(--glow);
@@ -244,6 +249,9 @@
     background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;
   }
   @media (hover:hover){.sounds button:hover{color:var(--gold-deep)}}
+  /* 試聽中：被選聲音按鈕的柔和光暈脈動，回饋更明確 */
+  .sounds button.previewing{animation:soundPulse .85s ease-out}
+  @keyframes soundPulse{0%{box-shadow:0 0 0 0 var(--glow)}55%{box-shadow:0 0 14px 1px var(--glow)}100%{box-shadow:0 0 0 0 rgba(0,0,0,0)}}
 
   .vol-row{display:flex;align-items:center;gap:12px;justify-content:center;padding:0 8px;max-width:280px;margin:0 auto}
   .vol-icon{font-size:14px;color:var(--gold-deep);text-shadow:0 0 8px var(--glow);flex-shrink:0}
@@ -281,10 +289,12 @@
   .brand{font-family:'Dancing Script',var(--serif-en);font-size:16px;font-weight:600;color:var(--gold-deep);opacity:.5;text-align:center;letter-spacing:.02em;margin-top:14px}
   .foot a{color:var(--gold-deep);cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold-border)}
   :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  /* 螢幕報讀專用：視覺隱藏但報讀軟體可讀 */
+  .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
   /* ---------- 設定面板 ---------- */
   .gear{
-    position:absolute;top:13px;right:14px;z-index:6;
+    position:absolute;top:11px;right:11px;z-index:6;
     display:inline-flex;align-items:center;gap:6px;
     padding:6px 12px 6px 10px;border:1px solid var(--gold-border);border-radius:20px;
     background:rgba(184,146,74,.07);color:var(--gold-deep);cursor:pointer;opacity:.9;
@@ -424,8 +434,10 @@
   }
   .cta-dots button.active{width:18px;border-radius:4px;background:var(--gold);box-shadow:0 0 8px var(--glow)}
 
+  /* 切到背景分頁時暫停所有裝飾動畫（省電），計時邏輯是 JS 不受影響 */
+  body.tab-hidden *,body.tab-hidden *::before,body.tab-hidden *::after{animation-play-state:paused !important}
   @media (prefers-reduced-motion:reduce){
-    .divider .dot,.ring-wrap::before,.toggle,.ring-flow,h1,.sub{animation:none}
+    .divider .dot,.ring-wrap::before,.toggle,.ring-flow,h1,.sub,.time,.sounds button.previewing{animation:none}
     h1{-webkit-text-fill-color:var(--brown-deep);color:var(--brown-deep)}
   }
   /* 手機：關閉漂浮金點（最耗效能），但保留背景緩慢平移動畫——用更慢的週期降低重繪負擔 */
@@ -569,10 +581,11 @@
         </svg>
       </div>
       <div class="center">
-        <div class="time" id="time">25:00</div>
-        <div class="state" id="state">已暫停</div>
+        <div class="time" id="time" aria-hidden="true"><span class="t-d" id="timeH">25</span><span class="t-c">:</span><span class="t-d" id="timeM">00</span></div>
+        <div class="state" id="state" aria-live="polite" aria-atomic="true">已暫停</div>
       </div>
     </div>
+    <p class="sr-only" id="srAnnounce" aria-live="assertive" aria-atomic="true"></p>
 
     <p class="interval-note">每 25 分鐘 · 提醒一次</p>
     <p class="rest-count" id="restCount"></p>
@@ -633,7 +646,13 @@
   const totalMs = INTERVAL_MIN * 60 * 1000;
   const prog = document.getElementById('prog');
   const timeEl = document.getElementById('time');
+  const timeH = document.getElementById('timeH'), timeM = document.getElementById('timeM');
+  // 更新時間顯示：只改數字 span，冒號維持光學置中的固定元素
+  function showTime(ms){ const p = fmt(ms).split(':'); timeH.textContent = p[0]; timeM.textContent = p[1]; }
   const stateEl = document.getElementById('state');
+  const srAnnounce = document.getElementById('srAnnounce');
+  // 切到背景分頁暫停裝飾動畫（省電）；回到前景恢復。計時用 JS interval，不受影響
+  document.addEventListener('visibilitychange', function(){ document.body.classList.toggle('tab-hidden', document.hidden); });
   const toggle = document.getElementById('toggle');
   const sounds = document.getElementById('sounds');
   const notiBtn = document.getElementById('notiBtn');
@@ -776,7 +795,7 @@
 
   function render(){
     const remain = endTime - Date.now();
-    timeEl.textContent = fmt(remain);
+    showTime(remain);
     if(running) document.title = fmt(remain) + ' · Rise & Roam';
     const frac = Math.max(0, Math.min(1, remain / totalMs));
     prog.style.strokeDashoffset = CIRC * (1 - frac);
@@ -787,6 +806,7 @@
         cycleData.count++; saveCycles(); renderRestCount(); renderDayProgress(); renderStarProgress();
         moveIdx++; renderMove(true);
         notify(MOVES[moveIdx % MOVES.length]);
+        if(srAnnounce){ srAnnounce.textContent = '時間到，該起來走一走了。' + MOVES[moveIdx % MOVES.length]; }
         ringWrap.classList.remove('pulse'); void ringWrap.offsetWidth; ringWrap.classList.add('pulse');
         ringWrap.classList.add('glow-on');
         setTimeout(()=>ringWrap.classList.remove('glow-on'), 2600);
@@ -798,7 +818,7 @@
           running = false;
           toggle.textContent = '開始提醒'; toggle.classList.add('off');
           stateEl.textContent = '已完成 ' + repeat + ' 次';
-          timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
+          showTime(totalMs); prog.style.strokeDashoffset = 0;
           document.title = 'Rise & Roam · 起來走一走';
         } else {
           endTime = Date.now() + totalMs;
@@ -827,7 +847,7 @@
     running = false; if(tick) clearTimeout(tick);
     toggle.textContent = '開始提醒'; toggle.classList.add('off');
     stateEl.textContent = '已暫停';
-    timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
+    showTime(totalMs); prog.style.strokeDashoffset = 0;
     document.title = 'Rise & Roam · 起來走一走';
     ringWrap.classList.remove('glow-on');
     saveSession();
@@ -845,6 +865,9 @@
     soundMode = b.dataset.sound; saveState(); primeAudio();
     if(soundMode === 'auto'){ playSound(SOUND_LIST[autoIndex % SOUND_LIST.length]); }
     else { playSound(soundMode); }
+    // 試聽回饋：柔和光暈脈動
+    b.classList.remove('previewing'); void b.offsetWidth; b.classList.add('previewing');
+    setTimeout(function(){ b.classList.remove('previewing'); }, 900);
   });
 
   /* ---------- Web Audio 合成鈴聲（不需音檔、零外連） ---------- */
@@ -1102,7 +1125,7 @@
   });
   if('Notification' in window && Notification.permission === 'granted'){ notiBtn.textContent = '桌面通知已開啟 ✓'; }
 
-  timeEl.textContent = fmt(totalMs);
+  showTime(totalMs);
   renderRestCount();
   renderDayProgress();
   renderStarProgress();
