@@ -329,18 +329,18 @@
   .bg-slide{
     position:absolute;inset:0;background-size:cover;background-position:center;
     opacity:0;transition:opacity 2.6s ease;
-    filter:saturate(.72) brightness(1.04);transform:scale(1.05);
+    filter:saturate(.95) brightness(1.0) contrast(1.03);transform:scale(1.04);
   }
-  /* 緩慢平移縮放（Ken Burns）讓背景活起來——只有目前顯示的那張會動 */
+  /* 緩慢平移縮放（Ken Burns）讓背景活起來——放大幅度小一點，避免變糊 */
   .bg-slide.on{opacity:1;animation:kenburns 22s ease-in-out infinite alternate}
   @keyframes kenburns{
-    0%{transform:scale(1.08) translate(-2%,1.5%)}
-    100%{transform:scale(1.22) translate(3%,-2.5%)}
+    0%{transform:scale(1.04) translate(-1.5%,1%)}
+    100%{transform:scale(1.12) translate(2%,-1.5%)}
   }
   .bg-wash{position:absolute;inset:0;
     background:
-      radial-gradient(120% 80% at 50% 22%, rgba(245,210,158,.1), transparent 60%),
-      radial-gradient(125% 85% at 50% 28%, rgba(250,245,237,.55), rgba(243,237,227,.84) 100%);}
+      radial-gradient(120% 80% at 50% 22%, rgba(245,210,158,.08), transparent 62%),
+      radial-gradient(125% 85% at 50% 30%, rgba(250,245,237,.3), rgba(243,237,227,.58) 100%);}
 
   /* ---------- 互動式動畫（低調內斂） ---------- */
   body{perspective:1100px}
