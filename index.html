@@ -458,8 +458,7 @@
     var i=document.getElementById('intro');
     function reveal(){ document.body.classList.add('reveal'); }
     if(!i){ reveal(); return; }
-    var shown=false; try{ shown=!!sessionStorage.getItem('rr-intro'); sessionStorage.setItem('rr-intro','1'); }catch(e){}
-    if(shown){ i.classList.add('hide'); setTimeout(reveal,60); return; }
+    // 每次開啟網站都完整播放儀式頁（不再記憶是否看過）
     // 有進場：暖幕開始揭開時，元素才由上往下依序顯現
     i.addEventListener('click',function(){ i.style.animation='introOut .8s ease forwards'; setTimeout(reveal,150); });
     setTimeout(reveal,3300);
