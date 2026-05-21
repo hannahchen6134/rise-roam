@@ -428,10 +428,10 @@
     .divider .dot,.ring-wrap::before,.toggle,.ring-flow,h1,.sub{animation:none}
     h1{-webkit-text-fill-color:var(--brown-deep);color:var(--brown-deep)}
   }
-  /* 手機防卡頓：關閉漂浮金點與背景平移（毛玻璃後方持續移動會逼重繪），背景照片仍依時段交替 */
+  /* 手機：關閉漂浮金點（最耗效能），但保留背景緩慢平移動畫——用更慢的週期降低重繪負擔 */
   @media (max-width:640px){
     .fx-motes{display:none}
-    .bg-slide.on{animation:none}
+    .bg-slide.on{animation:kenburns 40s ease-in-out infinite alternate;will-change:transform}
   }
 
   @media (max-width:420px){
