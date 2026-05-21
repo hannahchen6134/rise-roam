@@ -85,14 +85,42 @@
       0 0 64px -22px rgba(206,164,102,.32),
       inset 0 1.5px 0 rgba(255,255,255,.8),
       inset 0 -1px 0 rgba(150,112,64,.07);
-    animation:cardIn 1.3s cubic-bezier(.22,.61,.36,1) both;
   }
-  @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
-  /* 進場依序浮現（標題→副標→飾線→圓環→下方控制項） */
-  @keyframes fadeSeq{from{opacity:0}to{opacity:1}}
-  .divider{animation:fadeSeq .9s ease both .55s}
-  .ring-wrap{animation:fadeSeq 1s ease both .72s}
-  .interval-note,.rest-count,.move-tip,.label,.sounds-carousel,.cta-dots,.cta-carousel,.cta-hint,.share-btn,.foot{animation:fadeSeq .9s ease both 1.05s}
+  /* 進場儀式：小巧圓環緩緩描繪＋柔光暈染，慢節奏淡出（夢幻、溫柔） */
+  .intro{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+    background:radial-gradient(70% 70% at 50% 44%,#f8f2e8,#ece1d1);
+    animation:introOut 1.4s ease 3.2s forwards}
+  .intro.hide{display:none}
+  .intro-ringwrap{position:relative;display:flex;align-items:center;justify-content:center}
+  .intro-glow{position:absolute;width:150px;height:150px;border-radius:50%;
+    background:radial-gradient(circle,rgba(216,183,138,.5),transparent 66%);filter:blur(9px);
+    animation:introBreath 4.5s ease-in-out infinite}
+  @keyframes introBreath{0%,100%{opacity:.4;transform:scale(.92)}50%{opacity:.78;transform:scale(1.1)}}
+  .intro svg{transform:rotate(-90deg);position:relative}
+  .intro-arc{animation:introDraw 2.5s cubic-bezier(.33,0,.18,1) .3s forwards;filter:drop-shadow(0 0 5px rgba(206,164,102,.55))}
+  @keyframes introDraw{to{stroke-dashoffset:0}}
+  .intro-brand{font-family:'Dancing Script',var(--serif-en);font-size:16px;font-weight:500;color:rgba(150,118,68,.5);opacity:0;letter-spacing:.3em;padding-left:.3em;animation:introFade 1.4s ease 1.5s forwards}
+  .intro-zh{font-family:var(--serif);font-size:13px;letter-spacing:.36em;color:var(--text-2);opacity:0;padding-left:.36em;animation:introFade 1.4s ease 1.9s forwards}
+  @keyframes introFade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @keyframes introOut{to{opacity:0;transform:scale(1.04);visibility:hidden}}
+  /* 由上往下依序顯現：進場暖幕揭開後（body.reveal）才觸發，元素由上至下逐一淡入 */
+  .card>h1,.card>.sub,.card>.divider,.card>.ring-wrap,.card>.interval-note,.card>.rest-count,.card>.day-progress,.card>.move-tip,.card>.toggle,.card>.label,.card>.sounds-carousel,.card>.cta-dots,.card>.cta-carousel,.card>.cta-hint,.card>.share-btn,.card>.foot{opacity:0;transition:opacity .8s ease}
+  body.reveal .card>h1{opacity:1;transition-delay:.05s}
+  body.reveal .card>.sub{opacity:.5;transition-delay:.16s}
+  body.reveal .card>.divider{opacity:1;transition-delay:.27s}
+  body.reveal .card>.ring-wrap{opacity:1;transition-delay:.38s}
+  body.reveal .card>.interval-note{opacity:1;transition-delay:.49s}
+  body.reveal .card>.rest-count{opacity:1;transition-delay:.57s}
+  body.reveal .card>.day-progress{opacity:1;transition-delay:.62s}
+  body.reveal .card>.move-tip{opacity:1;transition-delay:.68s}
+  body.reveal .card>.toggle{opacity:1;transition-delay:.75s}
+  body.reveal .card>.label{opacity:1;transition-delay:.85s}
+  body.reveal .card>.sounds-carousel{opacity:1;transition-delay:.93s}
+  body.reveal .card>.cta-dots{opacity:1;transition-delay:.99s}
+  body.reveal .card>.cta-carousel{opacity:1;transition-delay:1.08s}
+  body.reveal .card>.cta-hint{opacity:1;transition-delay:1.15s}
+  body.reveal .card>.share-btn{opacity:1;transition-delay:1.21s}
+  body.reveal .card>.foot{opacity:1;transition-delay:1.28s}
 
   h1{
     font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:.08em;margin-bottom:14px;
@@ -100,12 +128,10 @@
     background-size:260% 100%;
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent;
-    animation:titleReveal 1.7s cubic-bezier(.22,.61,.36,1) .2s both, titleShimmer 11s ease-in-out infinite;
+    animation:titleShimmer 11s ease-in-out infinite;
   }
   @keyframes titleShimmer{0%{background-position:130% 0}100%{background-position:-30% 0}}
-  @keyframes titleReveal{from{opacity:0;letter-spacing:-.04em;transform:translateY(6px)}to{opacity:1;letter-spacing:.08em;transform:translateY(0)}}
-  .sub{font-family:'Dancing Script',var(--serif-en);font-size:12px;font-weight:500;color:var(--gold-deep);letter-spacing:.34em;line-height:1.2;opacity:.5;animation:subFade 1.7s ease both .5s}
-  @keyframes subFade{from{opacity:0;transform:translateY(5px)}to{opacity:.5;transform:none}}
+  .sub{font-family:'Dancing Script',var(--serif-en);font-size:12px;font-weight:500;color:var(--gold-deep);letter-spacing:.34em;line-height:1.2}
 
   /* 古典分隔飾線 */
   .divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0 26px}
@@ -138,22 +164,23 @@
   @keyframes ringFlow{to{transform:rotate(360deg)}}
   .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3}
 
-  /* 里程碑星芒（持續 12 次） */
-  .starburst{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:2}
+  /* 星芒：隨今日休息次數逐漸成長（累計感），集滿 12 次盛大綻放 */
+  .starburst{position:absolute;inset:0;pointer-events:none;opacity:1;z-index:2}
   .starburst svg{
     position:absolute;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);overflow:visible;
     -webkit-mask:radial-gradient(circle at center,transparent 0 24%,#000 39%);
             mask:radial-gradient(circle at center,transparent 0 24%,#000 39%);
   }
   .sb-rays,.sb-bloom,.sb-wave{transform-box:fill-box;transform-origin:center}
-  .starburst.play{animation:sbFade 3.8s ease-out forwards}
-  @keyframes sbFade{0%{opacity:0}10%{opacity:1}72%{opacity:1}100%{opacity:0}}
-  .starburst.play .sb-rays{animation:sbRays 3.8s cubic-bezier(.16,.7,.3,1) forwards}
-  @keyframes sbRays{0%{transform:scale(.35) rotate(-14deg);opacity:0}20%{opacity:1}100%{transform:scale(1.12) rotate(10deg);opacity:0}}
-  .starburst.play .sb-bloom{animation:sbBloom 3.8s ease-out forwards}
-  @keyframes sbBloom{0%{transform:scale(.3);opacity:0}22%{opacity:.85}100%{transform:scale(1.5);opacity:0}}
-  .starburst.play .sb-wave{animation:sbWave 3.8s ease-out forwards}
-  @keyframes sbWave{0%{transform:scale(.5);opacity:0}18%{opacity:.7}100%{transform:scale(1.55);opacity:0}}
+  /* 持續累計顯示：強度依 --prog（0→1）平滑成長 */
+  .sb-rays{opacity:calc(var(--prog,0) * .8);transform:scale(calc(.55 + var(--prog,0) * .5));transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.22,.61,.36,1);filter:drop-shadow(0 0 2px rgba(206,164,102,.45))}
+  .sb-bloom{opacity:calc(var(--prog,0) * .4);transform:scale(calc(.7 + var(--prog,0) * .4));transition:opacity 1.1s ease,transform 1.1s ease}
+  .sb-wave{opacity:0}
+  /* 集滿 12 次的盛大慶祝（脈動後回到滿星） */
+  .starburst.celebrate .sb-rays{animation:sbCelebrate 2.3s cubic-bezier(.2,.7,.3,1)}
+  @keyframes sbCelebrate{0%{transform:scale(1.08)}26%{transform:scale(1.34) rotate(6deg)}100%{transform:scale(1.08)}}
+  .starburst.celebrate .sb-wave{opacity:1;animation:sbWave 2.3s ease-out}
+  @keyframes sbWave{0%{transform:scale(.6);opacity:0}20%{opacity:.7}100%{transform:scale(1.6);opacity:0}}
   .time{
     font-family:var(--serif-en);font-size:60px;font-weight:500;line-height:1;
     letter-spacing:.01em;font-variant-numeric:tabular-nums;
@@ -163,7 +190,10 @@
 
   /* 三層小字層級：註記（最小）< 狀態（中）< 動作（最重） */
   .interval-note{font-family:var(--serif);font-size:10.5px;color:var(--text-3);letter-spacing:.22em;margin:14px 0 7px;opacity:.85}
-  .rest-count{font-family:var(--serif);font-size:11.5px;color:var(--gold-deep);letter-spacing:.16em;margin:0 0 18px;transition:color .4s}
+  .rest-count{font-family:var(--serif);font-size:11.5px;color:var(--gold-deep);letter-spacing:.16em;margin:0 0 10px;transition:color .4s}
+  .day-progress{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;max-width:180px;margin:0 auto 18px}
+  .dp-dot{width:5px;height:5px;border-radius:50%;background:var(--gold-border);transition:background .5s ease,box-shadow .5s ease,transform .5s ease}
+  .dp-dot.on{background:var(--gold);box-shadow:0 0 6px var(--glow);transform:scale(1.15)}
   .rest-count .rc-star{color:var(--gold);margin-left:4px}
   .move-tip{margin:0 auto 22px;max-width:288px}
   .move-tip .mt-label{display:block;font-family:var(--serif);font-size:10px;color:var(--gold-deep);letter-spacing:.28em;margin-bottom:7px;opacity:.85}
@@ -178,7 +208,7 @@
     color:#fdf8f1;background:linear-gradient(135deg,rgba(120,82,50,.54),rgba(92,60,34,.66));
     box-shadow:0 12px 26px -12px var(--gold-deep),0 0 22px -4px var(--glow);
     transition:transform .25s ease,box-shadow .35s ease;
-    animation:fadeSeq .9s ease both 1s, btnGlow 3.4s ease-in-out infinite;
+    animation:btnGlow 3.4s ease-in-out infinite;
   }
   @keyframes btnGlow{
     0%,100%{box-shadow:0 12px 26px -12px var(--gold-deep),0 0 18px -4px var(--glow)}
@@ -192,6 +222,12 @@
     --gold-deep:#b58e5b;
   }
 
+  .snooze{display:block;margin:12px auto 0;border:1px solid var(--gold-border);background:transparent;cursor:pointer;
+    font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--gold-deep);padding:7px 18px;border-radius:30px;
+    opacity:0;transform:translateY(-4px);transition:opacity .5s ease,transform .5s ease,background .2s}
+  .snooze[hidden]{display:none}
+  .snooze.show{opacity:1;transform:translateY(0)}
+  @media (hover:hover){.snooze:hover{background:var(--gold-light)}}
   .label{font-family:var(--serif);font-size:11px;color:var(--text-3);letter-spacing:.2em;margin:28px 0 14px}
   .sounds{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
   .sounds button{
@@ -278,13 +314,22 @@
   }
   .repeat-opts button.active{background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;box-shadow:0 0 14px -3px var(--glow)}
   @media (hover:hover){.repeat-opts button:hover{transform:translateY(-1px)}}
+  /* 提醒時段 */
+  .ah-toggle{display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;font-family:var(--serif);font-size:12.5px;color:var(--text-2);letter-spacing:.06em}
+  .ah-toggle input{-webkit-appearance:none;appearance:none;width:18px;height:18px;border:1.5px solid var(--gold-border);border-radius:50%;cursor:pointer;flex-shrink:0;position:relative;transition:all .25s;background:transparent}
+  .ah-toggle input:checked{background:var(--gold);border-color:var(--gold)}
+  .ah-toggle input:checked::after{content:'';position:absolute;top:3px;left:5.5px;width:4px;height:8px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+  .ah-times{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;opacity:.4;pointer-events:none;transition:opacity .3s}
+  .ah-times.on{opacity:1;pointer-events:auto}
+  .ah-times input[type=time]{font-family:var(--serif);font-size:14px;color:var(--gold-deep);background:var(--gold-light);border:1px solid var(--gold-border);border-radius:10px;padding:6px 10px;cursor:pointer}
+  .ah-sep{color:var(--text-3)}
 
   /* ---------- 背景：晨→夜照片緩慢交叉淡入（低彩度、霧白漸層） ---------- */
   .bgshow{position:fixed;inset:0;z-index:0;overflow:hidden}
   .bg-slide{
     position:absolute;inset:0;background-size:cover;background-position:center;
     opacity:0;transition:opacity 2.6s ease;
-    filter:saturate(.7) brightness(1.04) sepia(.06);transform:scale(1.05);
+    filter:saturate(.72) brightness(1.04);transform:scale(1.05);
   }
   /* 緩慢平移縮放（Ken Burns）讓背景活起來——只有目前顯示的那張會動 */
   .bg-slide.on{opacity:1;animation:kenburns 22s ease-in-out infinite alternate}
@@ -349,26 +394,25 @@
   .cta-carousel{margin-top:28px;display:flex;align-items:center;justify-content:center;gap:6px;max-width:300px;margin-left:auto;margin-right:auto}
   .cta-nav{flex-shrink:0;width:40px;height:40px;padding:0;border:none;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;cursor:pointer;border-radius:50%;opacity:.5;transition:opacity .2s,background .2s}
   @media (hover:hover){.cta-nav:hover{opacity:1;background:var(--gold-light)}}
-  .cta-viewport{position:relative;flex:1;height:44px;overflow:hidden;touch-action:pan-y}
+  .cta-viewport{position:relative;flex:1;height:32px;overflow:hidden;touch-action:pan-y}
   .cta-slide{
     position:absolute;top:50%;left:50%;
-    display:inline-flex;align-items:center;gap:10px;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
     text-decoration:none;border-radius:40px;
-    border:1px solid var(--gold-border);background:transparent;
+    border:1px solid rgba(184,146,74,.2);background:transparent;
     color:var(--gold-deep);
-    font-family:var(--serif);font-size:13px;font-weight:500;letter-spacing:.18em;
-    padding:10px 24px;
-    box-shadow:0 0 15px -7px var(--glow);
-    opacity:0;transform:translate(-50%,-50%) translateY(6px);
-    transition:opacity .6s ease,transform .6s ease,box-shadow .35s ease;pointer-events:none;
+    font-family:var(--serif);font-size:9.5px;font-weight:400;letter-spacing:.16em;
+    padding:5px 14px;
+    opacity:0;transform:translate(-50%,-50%) translateY(4px);
+    transition:opacity .6s ease,transform .6s ease;pointer-events:none;
   }
   .cta-slide.active{opacity:1;transform:translate(-50%,-50%);pointer-events:auto}
-  .cta-arrow{font-size:12px;opacity:.75;transition:transform .35s ease}
+  .cta-arrow{font-size:9px;opacity:.6;transition:transform .35s ease}
   @media (hover:hover){
     .cta-slide.active:hover{transform:translate(-50%,-50%) translateY(-1px);box-shadow:0 0 24px -6px var(--glow)}
     .cta-slide.active:hover .cta-arrow{transform:translateX(3px)}
   }
-  .cta-hint{margin-top:8px;text-align:center;font-family:var(--serif);font-size:10px;color:var(--text-3);letter-spacing:.24em;opacity:.65}
+  .cta-hint{margin-top:7px;text-align:center;font-family:var(--serif);font-size:8.5px;color:var(--text-3);letter-spacing:.26em;opacity:.5}
   .cta-dots{display:flex;gap:7px;justify-content:center;margin-top:12px}
   .cta-dots button{
     width:7px;height:7px;padding:0;border:none;border-radius:50%;cursor:pointer;
@@ -394,12 +438,37 @@
 </style>
 </head>
 <body>
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro-ringwrap">
+      <span class="intro-glow"></span>
+      <svg viewBox="0 0 120 120" width="84" height="84">
+        <defs><linearGradient id="introG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dcb682"/><stop offset="1" stop-color="#b88a4d"/></linearGradient></defs>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(200,170,120,.28)" stroke-width="1.8"/>
+        <circle class="intro-arc" cx="60" cy="60" r="52" fill="none" stroke="url(#introG)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327"/>
+      </svg>
+    </div>
+    <div class="intro-brand">Rise &amp; Roam</div>
+    <div class="intro-zh">起來走一走</div>
+  </div>
+  <script>
+  (function(){
+    var i=document.getElementById('intro');
+    function reveal(){ document.body.classList.add('reveal'); }
+    if(!i){ reveal(); return; }
+    var shown=false; try{ shown=!!sessionStorage.getItem('rr-intro'); sessionStorage.setItem('rr-intro','1'); }catch(e){}
+    if(shown){ i.classList.add('hide'); setTimeout(reveal,60); return; }
+    // 有進場：暖幕開始揭開時，元素才由上往下依序顯現
+    i.addEventListener('click',function(){ i.style.animation='introOut .8s ease forwards'; setTimeout(reveal,150); });
+    setTimeout(reveal,3300);
+    setTimeout(function(){ if(i.parentNode)i.parentNode.removeChild(i); },4900);
+  })();
+  </script>
+
   <div class="bgshow" aria-hidden="true">
-    <div class="bg-slide on" style="background-image:url('pexels-afhamhmsyri-36903387.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-ryan-lee-706204269-30560139.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-sorrasfilms-14062621.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-mutecevvil-17307056.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-photoplivka-34135841.jpg')"></div>
+    <div class="bg-slide on" style="background-image:url('pexels-julieaagaard-1368522.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-renkgezgini-222950261-12840127.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('pexels-skylake-16668318.jpg')"></div>
+    <div class="bg-slide" style="background-image:url('bg-dasilva.jpg')"></div>
     <div class="bg-wash"></div>
   </div>
 
@@ -429,6 +498,13 @@
           <button type="button" data-rep="4">4 次</button>
           <button type="button" data-rep="8">8 次</button>
           <button type="button" data-rep="12">12 次</button>
+        </div>
+        <div class="set-label">提醒時段</div>
+        <label class="ah-toggle"><input type="checkbox" id="ahOn"><span>只在這個時段提醒</span></label>
+        <div class="ah-times" id="ahTimes">
+          <input type="time" id="ahStart" value="09:00" aria-label="開始時間">
+          <span class="ah-sep">—</span>
+          <input type="time" id="ahEnd" value="18:00" aria-label="結束時間">
         </div>
       </div>
     </div>
@@ -468,20 +544,24 @@
               <stop offset="55%" stop-color="rgba(206,164,102,.2)"/>
               <stop offset="100%" stop-color="rgba(206,164,102,0)"/>
             </radialGradient>
-            <polygon id="sbL" points="112,112 114.6,46 112,4 109.4,46" fill="url(#sbRay)"/>
-            <polygon id="sbS" points="112,112 113.6,72 112,52 110.4,72" fill="url(#sbRay)"/>
+            <polygon id="sbN1" points="112,112 112.6,40 112,5 111.4,40" fill="url(#sbRay)"/>
+            <polygon id="sbN2" points="112,112 112.5,66 112,46 111.5,66" fill="url(#sbRay)"/>
           </defs>
-          <circle class="sb-bloom" cx="112" cy="112" r="88" fill="url(#sbGlow)"/>
-          <circle class="sb-wave" cx="112" cy="112" r="62" fill="none" stroke="rgba(206,164,102,.5)" stroke-width="1.5"/>
+          <circle class="sb-bloom" cx="112" cy="112" r="86" fill="url(#sbGlow)"/>
+          <circle class="sb-wave" cx="112" cy="112" r="64" fill="none" stroke="rgba(206,164,102,.4)" stroke-width="1"/>
           <g class="sb-rays">
-            <use href="#sbL"/>
-            <use href="#sbL" transform="rotate(90 112 112)"/>
-            <use href="#sbL" transform="rotate(180 112 112)"/>
-            <use href="#sbL" transform="rotate(270 112 112)"/>
-            <use href="#sbS" transform="rotate(45 112 112)"/>
-            <use href="#sbS" transform="rotate(135 112 112)"/>
-            <use href="#sbS" transform="rotate(225 112 112)"/>
-            <use href="#sbS" transform="rotate(315 112 112)"/>
+            <use href="#sbN1"/>
+            <use href="#sbN2" transform="rotate(30 112 112)"/>
+            <use href="#sbN1" transform="rotate(60 112 112)"/>
+            <use href="#sbN2" transform="rotate(90 112 112)"/>
+            <use href="#sbN1" transform="rotate(120 112 112)"/>
+            <use href="#sbN2" transform="rotate(150 112 112)"/>
+            <use href="#sbN1" transform="rotate(180 112 112)"/>
+            <use href="#sbN2" transform="rotate(210 112 112)"/>
+            <use href="#sbN1" transform="rotate(240 112 112)"/>
+            <use href="#sbN2" transform="rotate(270 112 112)"/>
+            <use href="#sbN1" transform="rotate(300 112 112)"/>
+            <use href="#sbN2" transform="rotate(330 112 112)"/>
           </g>
         </svg>
       </div>
@@ -493,9 +573,11 @@
 
     <p class="interval-note">每 25 分鐘 · 提醒一次</p>
     <p class="rest-count" id="restCount"></p>
+    <div class="day-progress" id="dayProgress" aria-hidden="true"></div>
     <p class="move-tip" id="moveTip"></p>
 
     <button class="toggle off" id="toggle">開始提醒</button>
+    <button class="snooze" id="snoozeBtn" hidden>待會再說 · 5 分鐘</button>
 
     <div class="label">鈴聲 · 點一下可試聽</div>
     <div class="sounds-carousel" id="soundsCarousel">
@@ -562,7 +644,20 @@
   let soundMode = saved.soundMode || 'auto';
   let volume = (typeof saved.volume === 'number') ? saved.volume : 70;  // 0~100
   let repeat = (typeof saved.repeat === 'number') ? saved.repeat : 0;   // 0 = 一直提醒
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ soundMode:soundMode, volume:volume, repeat:repeat })); }
+  let ahOn = !!saved.ahOn;                                              // 限定提醒時段
+  let ahStart = saved.ahStart || '09:00';
+  let ahEnd = saved.ahEnd || '18:00';
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ soundMode:soundMode, volume:volume, repeat:repeat, ahOn:ahOn, ahStart:ahStart, ahEnd:ahEnd })); }
+
+  // 是否在提醒時段內（時段外不響）
+  function toMin(t){ var p=(t||'').split(':'); return (parseInt(p[0],10)||0)*60 + (parseInt(p[1],10)||0); }
+  function withinActiveHours(){
+    if(!ahOn) return true;
+    var now=new Date(), cur=now.getHours()*60+now.getMinutes();
+    var s=toMin(ahStart), e=toMin(ahEnd);
+    if(s===e) return true;
+    return s<e ? (cur>=s && cur<e) : (cur>=s || cur<e); // 支援跨夜時段
+  }
 
   // 每日完成週期計數（持續 12 次綻放星芒）
   const CYCLES_KEY = 'rest-reminder-cycles';
@@ -580,6 +675,18 @@
     restCountEl.innerHTML = '今日已休息 ' + n + ' 次' + (n >= MILESTONE ? ' <span class="rc-star">✦</span>' : '');
   }
 
+  // 今日進度：12 顆小點，每休息一次亮一顆，集滿綻放星芒
+  const dayProgress = document.getElementById('dayProgress');
+  function renderDayProgress(){
+    if(dayProgress.children.length !== MILESTONE){
+      dayProgress.innerHTML = '';
+      for(let i=0;i<MILESTONE;i++){ const s=document.createElement('span'); s.className='dp-dot'; dayProgress.appendChild(s); }
+    }
+    let filled = cycleData.count % MILESTONE;
+    if(filled === 0 && cycleData.count > 0) filled = MILESTONE;   // 剛集滿
+    [...dayProgress.children].forEach((d,i)=> d.classList.toggle('on', i < filled));
+  }
+
   // 久坐族的起身小動作（全部要離開椅子、動到身體），響鈴時輪流顯示
   const MOVES = [
     '站起來，走到窗邊看遠方 30 秒',
@@ -595,16 +702,22 @@
   ];
   let moveIdx = 0;
   const moveTip = document.getElementById('moveTip');
-  function renderMove(){
+  function renderMove(flash){
     moveTip.innerHTML = '<span class="mt-text">' + MOVES[moveIdx % MOVES.length] + '</span>';
-    moveTip.classList.remove('upd'); void moveTip.offsetWidth; moveTip.classList.add('upd');
+    if(flash){ moveTip.classList.remove('upd'); void moveTip.offsetWidth; moveTip.classList.add('upd'); }
   }
 
   const starburst = document.getElementById('starburst');
+  // 星芒強度依今日進度（0→1）成長
+  function renderStarProgress(){
+    let p = (cycleData.count % MILESTONE) / MILESTONE;
+    if(p === 0 && cycleData.count > 0) p = 1;   // 剛集滿
+    starburst.style.setProperty('--prog', p.toFixed(3));
+  }
   function playStarburst(){
     ringWrap.classList.add('glow-on');
-    starburst.classList.remove('play'); void starburst.offsetWidth; starburst.classList.add('play');
-    setTimeout(()=>{ starburst.classList.remove('play'); ringWrap.classList.remove('glow-on'); }, 3900);
+    starburst.classList.remove('celebrate'); void starburst.offsetWidth; starburst.classList.add('celebrate');
+    setTimeout(()=>{ starburst.classList.remove('celebrate'); ringWrap.classList.remove('glow-on'); }, 2500);
   }
 
   const soundBtns = [...sounds.querySelectorAll('button')];
@@ -631,6 +744,26 @@
     try{ localStorage.setItem(SESSION_KEY, JSON.stringify({ running:running, endTime:endTime, cyclesRun:cyclesRun, moveIdx:moveIdx })); }catch(e){}
   }
 
+  // 響鈴時的「待會再說・5 分鐘」
+  const snoozeBtn = document.getElementById('snoozeBtn');
+  let snoozeHideTimer = null;
+  function showSnooze(){
+    snoozeBtn.hidden = false; void snoozeBtn.offsetWidth; snoozeBtn.classList.add('show');
+    if(snoozeHideTimer) clearTimeout(snoozeHideTimer);
+    snoozeHideTimer = setTimeout(hideSnooze, 60000);
+  }
+  function hideSnooze(){
+    snoozeBtn.classList.remove('show');
+    if(snoozeHideTimer){ clearTimeout(snoozeHideTimer); snoozeHideTimer = null; }
+    setTimeout(function(){ if(!snoozeBtn.classList.contains('show')) snoozeBtn.hidden = true; }, 500);
+  }
+  snoozeBtn.addEventListener('click', function(){
+    if(!running) return;
+    endTime = Date.now() + 5*60*1000;   // 5 分鐘後再提醒
+    stateEl.textContent = '5 分鐘後再提醒';
+    saveSession(); hideSnooze();
+  });
+
   function fmt(ms){
     if(ms < 0) ms = 0;
     const s = Math.round(ms/1000);
@@ -644,24 +777,30 @@
     const frac = Math.max(0, Math.min(1, remain / totalMs));
     prog.style.strokeDashoffset = CIRC * (1 - frac);
     if(remain <= 0 && running){
-      ringBell();
-      // 計數一次完成的週期、換下一個起身小動作、發通知
-      cycleData.count++; saveCycles(); renderRestCount();
-      moveIdx++; renderMove();
-      notify(MOVES[moveIdx % MOVES.length]);
-      ringWrap.classList.remove('pulse'); void ringWrap.offsetWidth; ringWrap.classList.add('pulse');
-      ringWrap.classList.add('glow-on');
-      setTimeout(()=>ringWrap.classList.remove('glow-on'), 2600);
-      if(cycleData.count % MILESTONE === 0){ playStarburst(); }
-      // 重複次數上限：達到後自動停止
-      cyclesRun++;
-      if(repeat > 0 && cyclesRun >= repeat){
-        running = false;
-        toggle.textContent = '開始提醒'; toggle.classList.add('off');
-        stateEl.textContent = '已完成 ' + repeat + ' 次';
-        timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
-        document.title = 'Rise & Roam · 起來走一走';
+      if(withinActiveHours()){
+        ringBell();
+        // 計數一次完成的週期、換下一個起身小動作、發通知
+        cycleData.count++; saveCycles(); renderRestCount(); renderDayProgress(); renderStarProgress();
+        moveIdx++; renderMove(true);
+        notify(MOVES[moveIdx % MOVES.length]);
+        ringWrap.classList.remove('pulse'); void ringWrap.offsetWidth; ringWrap.classList.add('pulse');
+        ringWrap.classList.add('glow-on');
+        setTimeout(()=>ringWrap.classList.remove('glow-on'), 2600);
+        if(cycleData.count % MILESTONE === 0){ playStarburst(); }
+        showSnooze();
+        // 重複次數上限：達到後自動停止
+        cyclesRun++;
+        if(repeat > 0 && cyclesRun >= repeat){
+          running = false;
+          toggle.textContent = '開始提醒'; toggle.classList.add('off');
+          stateEl.textContent = '已完成 ' + repeat + ' 次';
+          timeEl.textContent = fmt(totalMs); prog.style.strokeDashoffset = 0;
+          document.title = 'Rise & Roam · 起來走一走';
+        } else {
+          endTime = Date.now() + totalMs;
+        }
       } else {
+        // 提醒時段外：安靜略過、繼續計時，回到時段內再響
         endTime = Date.now() + totalMs;
       }
       saveSession();
@@ -848,6 +987,8 @@
 
   timeEl.textContent = fmt(totalMs);
   renderRestCount();
+  renderDayProgress();
+  renderStarProgress();
   renderMove();
 
   // 重整／意外關閉後自動接續計時（若先前在計時且尚未到期）
@@ -870,7 +1011,7 @@
   // 背景：依台灣真實時段挑對應照片（每 15 分檢查、跨時段柔和淡入）
   (function(){
     const slides = [...document.querySelectorAll('.bg-slide')];
-    if(slides.length < 5) return;
+    if(slides.length < 4) return;
     function taiwanHour(){
       try{
         const h = parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hour12:false,hourCycle:'h23'}).format(new Date()),10);
@@ -878,11 +1019,10 @@
       }catch(e){ return new Date().getHours(); }
     }
     function bgIndexForHour(h){
-      if(h>=5 && h<8) return 0;    // 清晨：湖泊晨景
-      if(h>=8 && h<11) return 1;   // 上午：霧林晨光
-      if(h>=11 && h<14) return 2;  // 中午：綠草白花
-      if(h>=14 && h<17) return 3;  // 下午：蕨葉濃綠
-      return 4;                    // 傍晚～深夜：白花夕照
+      if(h>=5 && h<11) return 0;   // 清晨～早晨：草原晨光
+      if(h>=11 && h<16) return 1;  // 白天：森林綠湖
+      if(h>=16 && h<19) return 2;  // 黃昏：麥田夕陽
+      return 3;                    // 傍晚～夜：草地金色逆光
     }
     function applyTimeBg(){
       const idx = bgIndexForHour(taiwanHour());
@@ -962,6 +1102,17 @@
     repeat = parseInt(b.dataset.rep, 10); saveState();
     if(running) cyclesRun = 0;  // 重新計算重複次數
   });
+
+  // 提醒時段
+  const ahOnEl = document.getElementById('ahOn');
+  const ahStartEl = document.getElementById('ahStart');
+  const ahEndEl = document.getElementById('ahEnd');
+  const ahTimes = document.getElementById('ahTimes');
+  ahOnEl.checked = ahOn; ahStartEl.value = ahStart; ahEndEl.value = ahEnd;
+  ahTimes.classList.toggle('on', ahOn);
+  ahOnEl.addEventListener('change', ()=>{ ahOn = ahOnEl.checked; ahTimes.classList.toggle('on', ahOn); saveState(); });
+  ahStartEl.addEventListener('change', ()=>{ ahStart = ahStartEl.value || '09:00'; saveState(); });
+  ahEndEl.addEventListener('change', ()=>{ ahEnd = ahEndEl.value || '18:00'; saveState(); });
 
   /* ---------- 鈴聲輪播 ---------- */
   (function(){

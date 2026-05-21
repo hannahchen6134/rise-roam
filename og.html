@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>Rise & Roam — 分享預覽卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Dancing+Script:wght@600&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --gold:#B8924A;--gold-deep:#9c7a45;--gold-soft:#d8b78a;
+    --brown:#43301c;--text2:#8a7860;
+    --glow:rgba(206,164,102,.55);
+  }
+  html,body{width:1200px;height:630px;overflow:hidden}
+  .card{
+    position:relative;width:1200px;height:630px;
+    display:flex;align-items:center;justify-content:center;gap:70px;
+    background:
+      radial-gradient(60% 90% at 22% 30%, rgba(216,183,138,.35), transparent 60%),
+      radial-gradient(70% 100% at 88% 80%, rgba(233,197,150,.3), transparent 62%),
+      linear-gradient(135deg,#f7f1e8,#efe5d4);
+    font-family:'Noto Serif TC',serif;color:var(--brown);
+  }
+  /* 左：計時圓環 */
+  .ring-wrap{position:relative;width:340px;height:340px;flex-shrink:0}
+  .ring-wrap::before{content:'';position:absolute;inset:40px;border-radius:50%;
+    background:radial-gradient(circle,var(--glow),transparent 68%);opacity:.6;filter:blur(8px)}
+  svg{transform:rotate(-90deg);position:relative}
+  .time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .time .t{font-family:'Cormorant Garamond',serif;font-size:92px;font-weight:500;line-height:1;letter-spacing:.02em;text-shadow:0 0 26px var(--glow)}
+  .time .s{font-family:'Noto Serif TC',serif;font-size:18px;letter-spacing:.24em;color:var(--text2);margin-top:12px}
+  /* 右：品牌文字 */
+  .copy{display:flex;flex-direction:column;align-items:flex-start;max-width:430px}
+  .brand-en{font-family:'Dancing Script',cursive;font-size:40px;font-weight:600;color:var(--gold-deep);letter-spacing:.04em;opacity:.85;margin-bottom:6px}
+  .brand-zh{font-family:'Noto Serif TC',serif;font-size:62px;font-weight:600;letter-spacing:.06em;line-height:1.25}
+  .divider{display:flex;align-items:center;gap:12px;margin:26px 0}
+  .divider .line{width:60px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+  .divider .dot{width:8px;height:8px;transform:rotate(45deg);background:var(--gold);box-shadow:0 0 10px var(--glow)}
+  .tag{font-family:'Noto Serif TC',serif;font-size:24px;color:var(--text2);letter-spacing:.08em;line-height:1.7}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="ring-wrap">
+      <svg width="340" height="340" viewBox="0 0 340 340">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#dcb682"/><stop offset="1" stop-color="#b88a4d"/>
+          </linearGradient>
+        </defs>
+        <circle cx="170" cy="170" r="150" fill="none" stroke="#ede5d5" stroke-width="14"/>
+        <circle cx="170" cy="170" r="150" fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round"
+                stroke-dasharray="707 235"/>
+      </svg>
+      <div class="time"><div class="t">25:00</div><div class="s">起來走一走</div></div>
+    </div>
+    <div class="copy">
+      <div class="brand-en">Rise &amp; Roam</div>
+      <div class="brand-zh">該起來<br>走一走了</div>
+      <div class="divider"><span class="line"></span><span class="dot"></span></div>
+      <div class="tag">久坐族的溫柔提醒器<br>每 25 分鐘，起身走動・伸展</div>
+    </div>
+  </div>
+</body>
+</html>
