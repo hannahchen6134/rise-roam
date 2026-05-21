@@ -54,7 +54,7 @@
     --bg-1:#f7f1e8;
     --bg-2:#efe5d4;
     --ring-track:#ede5d5;
-    --card:rgba(255,253,248,.77);
+    --card:rgba(255,253,248,.82);
     --serif-en:'Cormorant Garamond',serif;
     --serif:'Noto Serif TC',serif;
     --sans:'Noto Sans TC',sans-serif;
@@ -75,7 +75,7 @@
     position:relative;
     width:100%;max-width:392px;
     background:var(--card);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
     border:1px solid rgba(255,255,255,.7);
     border-radius:26px;
     padding:42px 32px 30px;
@@ -329,7 +329,7 @@
   .bg-slide{
     position:absolute;inset:0;background-size:cover;background-position:center;
     opacity:0;transition:opacity 2.6s ease;
-    filter:saturate(.95) brightness(1.0) contrast(1.03);transform:scale(1.04);
+    filter:saturate(.85) brightness(1.16);transform:scale(1.03);
   }
   /* 緩慢平移縮放（Ken Burns）讓背景活起來——放大幅度小一點，避免變糊 */
   .bg-slide.on{opacity:1;animation:kenburns 22s ease-in-out infinite alternate}
