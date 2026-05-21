@@ -12,8 +12,10 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="久坐休息提醒器 · 該起來走一走了">
 <meta property="og:description" content="每 25 分鐘溫柔提醒你起身走動、伸展，讓久坐的身體恢復柔軟與彈性。">
-<meta property="og:image" content="pexels-afhamhmsyri-36903387.jpg">
-<meta property="og:image:alt" content="晨光中的湖泊與山巒">
+<meta property="og:image" content="og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rise & Roam 休息提醒器：金色計時圓環與品牌">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {
@@ -111,7 +113,7 @@
   .divider .dot{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);box-shadow:0 0 8px var(--glow);animation:dotPulse 3.6s ease-in-out infinite}
   @keyframes dotPulse{0%,100%{box-shadow:0 0 6px var(--glow);opacity:.85}50%{box-shadow:0 0 14px var(--glow);opacity:1}}
 
-  .ring-wrap{position:relative;width:min(224px,70vw);aspect-ratio:1/1;margin:0 auto 8px;transition:transform .6s ease}
+  .ring-wrap{position:relative;width:min(224px,70vw);aspect-ratio:1/1;margin:0 auto 8px;transition:transform .6s ease;cursor:pointer}
   .ring-wrap.pulse{animation:pulse 1.8s ease}
   @keyframes pulse{0%{transform:scale(1)}28%{transform:scale(1.045)}100%{transform:scale(1)}}
   /* 圓環底層光暈 */
@@ -334,7 +336,8 @@
   .sc-track{display:flex;flex-wrap:nowrap;gap:0;justify-content:flex-start;transition:transform .55s cubic-bezier(.22,.61,.36,1)}
   .sc-page{flex:0 0 100%;display:flex;flex-wrap:nowrap;gap:7px;justify-content:center}
   .sc-arrow{
-    flex-shrink:0;width:26px;height:26px;padding:0;border:none;cursor:pointer;
+    flex-shrink:0;width:40px;height:40px;padding:0;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
     background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;
     border-radius:50%;opacity:.55;transition:opacity .2s,background .2s,box-shadow .25s;
   }
@@ -344,7 +347,7 @@
 
   /* ---------- 底部 CTA：可左右滑動的輪播 ---------- */
   .cta-carousel{margin-top:28px;display:flex;align-items:center;justify-content:center;gap:6px;max-width:300px;margin-left:auto;margin-right:auto}
-  .cta-nav{flex-shrink:0;width:26px;height:26px;padding:0;border:none;background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;cursor:pointer;border-radius:50%;opacity:.5;transition:opacity .2s,background .2s}
+  .cta-nav{flex-shrink:0;width:40px;height:40px;padding:0;border:none;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--gold-deep);font-size:20px;line-height:1;cursor:pointer;border-radius:50%;opacity:.5;transition:opacity .2s,background .2s}
   @media (hover:hover){.cta-nav:hover{opacity:1;background:var(--gold-light)}}
   .cta-viewport{position:relative;flex:1;height:44px;overflow:hidden;touch-action:pan-y}
   .cta-slide{
@@ -687,6 +690,10 @@
     saveSession();
   }
   toggle.addEventListener('click', ()=>{ primeAudio(); running ? stop() : start(); });
+  // 整個圓環也可點擊開始／暫停（大目標、更直覺）
+  ringWrap.addEventListener('click', ()=>{ primeAudio(); running ? stop() : start(); });
+  ringWrap.setAttribute('role','button');
+  ringWrap.setAttribute('aria-label','開始或暫停提醒');
 
   sounds.addEventListener('click', (e)=>{
     const b = e.target.closest('button'); if(!b) return;
