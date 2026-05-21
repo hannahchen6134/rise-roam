@@ -329,7 +329,7 @@
   .bg-slide{
     position:absolute;inset:0;background-size:cover;background-position:center;
     opacity:0;transition:opacity 2.6s ease;
-    filter:saturate(.85) brightness(1.16);transform:scale(1.03);
+    filter:saturate(.9) brightness(1.08);transform:scale(1.03);
   }
   /* 緩慢平移縮放（Ken Burns）讓背景活起來——放大幅度小一點，避免變糊 */
   .bg-slide.on{opacity:1;animation:kenburns 22s ease-in-out infinite alternate}
@@ -339,8 +339,8 @@
   }
   .bg-wash{position:absolute;inset:0;
     background:
-      radial-gradient(120% 80% at 50% 22%, rgba(245,210,158,.08), transparent 62%),
-      radial-gradient(125% 85% at 50% 30%, rgba(250,245,237,.3), rgba(243,237,227,.58) 100%);}
+      radial-gradient(115% 80% at 50% 24%, rgba(245,210,158,.08), transparent 60%),
+      radial-gradient(100% 75% at 50% 32%, rgba(250,245,237,.24), rgba(243,237,227,.68) 100%);}
 
   /* ---------- 互動式動畫（低調內斂） ---------- */
   body{perspective:1100px}
@@ -465,10 +465,10 @@
   </script>
 
   <div class="bgshow" aria-hidden="true">
-    <div class="bg-slide on" style="background-image:url('pexels-julieaagaard-1368522.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-renkgezgini-222950261-12840127.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('pexels-skylake-16668318.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('bg-dasilva.jpg')"></div>
+    <div class="bg-slide" data-bg="pexels-julieaagaard-1368522.jpg"></div>
+    <div class="bg-slide" data-bg="pexels-afhamhmsyri-36903387.jpg"></div>
+    <div class="bg-slide" data-bg="pexels-skylake-16668318.jpg"></div>
+    <div class="bg-slide" data-bg="bg-dasilva.jpg"></div>
     <div class="bg-wash"></div>
   </div>
 
@@ -1019,14 +1019,21 @@
       }catch(e){ return new Date().getHours(); }
     }
     function bgIndexForHour(h){
-      if(h>=5 && h<11) return 0;   // 清晨～早晨：草原晨光
-      if(h>=11 && h<16) return 1;  // 白天：森林綠湖
+      if(h>=5 && h<10) return 0;   // 清晨～早晨：草原晨光
+      if(h>=10 && h<16) return 1;  // 白天：明亮湖景
       if(h>=16 && h<19) return 2;  // 黃昏：麥田夕陽
       return 3;                    // 傍晚～夜：草地金色逆光
     }
     function applyTimeBg(){
       const idx = bgIndexForHour(taiwanHour());
-      slides.forEach((s,i)=> s.classList.toggle('on', i===idx));
+      slides.forEach(function(s,i){
+        if(i===idx){
+          if(!s.style.backgroundImage && s.dataset.bg){ s.style.backgroundImage = "url('" + s.dataset.bg + "')"; }
+          s.classList.add('on');
+        } else {
+          s.classList.remove('on');
+        }
+      });
     }
     applyTimeBg();
     setInterval(applyTimeBg, 15*60*1000);
