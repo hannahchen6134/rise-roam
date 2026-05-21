@@ -1,5 +1,5 @@
 /* 休息提醒器 Service Worker — 離線快取，讓它能像 App 一樣安裝與開啟 */
-const CACHE = 'rest-reminder-v2';
+const CACHE = 'rest-reminder-v3';
 const ASSETS = [
   './',
   './index.html',
