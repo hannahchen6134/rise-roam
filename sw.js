@@ -1,9 +1,11 @@
 /* 休息提醒器 Service Worker — HTML 網路優先、靜態資源快取優先，可離線可安裝 */
-const CACHE = 'rest-reminder-v4';
+const CACHE = 'rest-reminder-v5';
 const ASSETS = [
   './',
   './index.html',
   './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
   './manifest.json',
   './og.png',
   './pexels-julieaagaard-1368522.jpg',
