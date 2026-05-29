@@ -185,10 +185,27 @@
   .interval-note{font-family:var(--serif);font-size:10.5px;color:var(--text-3);letter-spacing:.18em;margin:6px 0 7px;opacity:.85}
   .next-info{font-family:var(--serif);font-size:11px;color:var(--text-2);letter-spacing:.12em;margin:0 0 8px;min-height:18px}
   .rest-count{font-family:var(--serif);font-size:11.5px;color:var(--gold-deep);letter-spacing:.12em;margin:0 0 10px;transition:color .4s}
-  .day-progress{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;max-width:180px;margin:0 auto 18px}
-  .dp-dot{width:5px;height:5px;border-radius:50%;background:var(--gold-border);transition:background .5s ease,box-shadow .5s ease,transform .5s ease}
-  .dp-dot.on{background:var(--gold);box-shadow:0 0 6px var(--glow);transform:scale(1.15)}
-  .rest-count .rc-star{color:var(--gold);margin-left:4px}
+  .day-progress{
+    display:grid;grid-template-columns:repeat(12,1fr);gap:4px;
+    width:min(184px,62vw);margin:0 auto 18px;padding:7px 9px;
+    border:1px solid rgba(184,146,74,.14);border-radius:999px;
+    background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,250,242,.16));
+    box-shadow:0 10px 24px -24px rgba(92,60,34,.48),0 1px 0 rgba(255,255,255,.54) inset;
+  }
+  .dp-dot{
+    height:12px;min-width:3px;border-radius:999px;
+    background:rgba(184,146,74,.13);
+    box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+    transition:background .5s ease,box-shadow .5s ease,transform .5s ease,opacity .5s ease;
+    opacity:.72;
+  }
+  .dp-dot.on{
+    background:linear-gradient(180deg,rgba(238,204,146,.96),rgba(184,146,74,.78));
+    box-shadow:0 0 8px rgba(206,164,102,.38),0 0 0 1px rgba(255,255,255,.28) inset;
+    transform:translateY(-1px);opacity:1;
+  }
+  .day-progress.complete{box-shadow:0 0 18px -11px rgba(206,164,102,.82),0 1px 0 rgba(255,255,255,.54) inset}
+  .rest-count .rc-star{color:var(--gold);margin-left:4px;font-size:.86em}
   .move-tip{margin:0 auto 24px;max-width:288px}
   .move-tip .mt-label{display:block;font-family:var(--serif);font-size:10px;color:var(--gold-deep);letter-spacing:.28em;margin-bottom:7px;opacity:.85}
   .move-tip .mt-text{font-family:var(--serif);font-size:14.5px;font-weight:500;line-height:1.6;color:var(--brown-deep);letter-spacing:.04em}
@@ -613,6 +630,28 @@ h1{
   color:rgba(74,55,35,.72);
   letter-spacing:.06em;
 }
+.rest-count{
+  margin:2px 0 9px;
+  color:rgba(111,78,38,.74);
+  font-size:11px;
+  letter-spacing:.11em;
+}
+.day-progress{
+  width:min(198px,64vw);
+  margin-bottom:20px;
+  padding:7px 10px;
+  gap:5px;
+}
+.dp-dot{
+  height:13px;
+  background:rgba(126,93,52,.1);
+}
+.dp-dot.on{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--scene-accent,#b8924a) 62%,#f3d8a0),rgba(184,146,74,.72));
+}
+.day-progress.complete .dp-dot.on{
+  box-shadow:0 0 10px color-mix(in srgb,var(--scene-accent,#b8924a) 48%,transparent);
+}
 .move-tip{
   margin-bottom:22px;
 }
@@ -761,17 +800,17 @@ h1{
             <button type="button" class="sc-arrow" id="scPrev" aria-label="上一組">‹</button>
             <div class="sc-viewport">
               <div class="sounds sc-track" id="sounds">
-                <button data-sound="auto" class="active">自動輪流</button>
-                <button data-sound="school">下課鐘</button>
-                <button data-sound="wind">風鈴</button>
-                <button data-sound="bowl">頌缽</button>
-                <button data-sound="muyu">木魚</button>
-                <button data-sound="drop">水滴</button>
-                <button data-sound="birds">鳥鳴</button>
-                <button data-sound="rain">雨聲</button>
-                <button data-sound="ocean">海浪</button>
-                <button data-sound="stream">溪流</button>
-                <button data-sound="night">蟲鳴</button>
+                <button data-sound="auto" class="active">自然輪流</button>
+                <button data-sound="wind">晨窗風鈴</button>
+                <button data-sound="birds">林間微光</button>
+                <button data-sound="rain">雨後窗邊</button>
+                <button data-sound="stream">溪流石徑</button>
+                <button data-sound="ocean">遠方海面</button>
+                <button data-sound="night">夜窗蟲聲</button>
+                <button data-sound="bowl">靜室頌缽</button>
+                <button data-sound="drop">露水滴落</button>
+                <button data-sound="muyu">木質輕叩</button>
+                <button data-sound="school">遠鐘</button>
               </div>
             </div>
             <button type="button" class="sc-arrow" id="scNext" aria-label="下一組">›</button>
@@ -975,11 +1014,12 @@ h1{
   const restCountEl = document.getElementById('restCount');
   function renderRestCount(){
     const n = cycleData.count;
-    if(n <= 0){ restCountEl.textContent = '今天還沒開始休息'; return; }
-    restCountEl.innerHTML = '今日已休息 ' + n + ' 次' + (n >= MILESTONE ? ' <span class="rc-star">✦</span>' : '');
+    const filled = n % MILESTONE || (n > 0 ? MILESTONE : 0);
+    if(n <= 0){ restCountEl.textContent = '今日節奏 0 / ' + MILESTONE; return; }
+    restCountEl.innerHTML = '今日節奏 ' + filled + ' / ' + MILESTONE + (filled === MILESTONE ? ' <span class="rc-star">完成</span>' : '');
   }
 
-  // 今日進度：12 顆小點，每休息一次亮一顆，集滿綻放星芒
+  // 今日進度：12 格細緻光軌，每休息一次亮一格，集滿時輕柔收束。
   const dayProgress = document.getElementById('dayProgress');
   function renderDayProgress(){
     if(dayProgress.children.length !== MILESTONE){
@@ -989,6 +1029,7 @@ h1{
     let filled = cycleData.count % MILESTONE;
     if(filled === 0 && cycleData.count > 0) filled = MILESTONE;   // 剛集滿
     [...dayProgress.children].forEach((d,i)=> d.classList.toggle('on', i < filled));
+    dayProgress.classList.toggle('complete', filled === MILESTONE);
   }
 
   // 久坐族的起身小動作（全部要離開椅子、動到身體），響鈴時輪流顯示
@@ -1232,7 +1273,19 @@ h1{
     const v = opt.vol||0.2, atk = opt.attack||0.3, rel = opt.release||0.6;
     g.gain.setValueAtTime(0, t0);
     g.gain.linearRampToValueAtTime(v, t0 + atk);
-    g.gain.setValueAtTime(v, t0 + Math.max(atk, opt.dur - rel));
+    const holdStart = t0 + atk;
+    const holdEnd = t0 + Math.max(atk, opt.dur - rel);
+    const drift = opt.drift || 0;
+    if(drift && holdEnd > holdStart){
+      const steps = Math.max(3, Math.floor(opt.dur / 0.65));
+      for(let i=1;i<=steps;i++){
+        const tt = holdStart + (holdEnd - holdStart) * (i / steps);
+        const vv = v * (1 - drift/2 + Math.random()*drift);
+        g.gain.linearRampToValueAtTime(vv, tt);
+      }
+    } else {
+      g.gain.setValueAtTime(v, holdEnd);
+    }
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + opt.dur);
     src.start(t0); src.stop(t0 + opt.dur + 0.1);
   }
@@ -1240,7 +1293,7 @@ h1{
   function chirp(base, start){
     const syl = 2 + Math.floor(Math.random()*2);
     for(let k=0;k<syl;k++){
-      tone({freq:base, glideTo:base*1.45, start:start + k*0.09, dur:0.07, vol:.16, type:'sine', attack:.006});
+      tone({freq:base, glideTo:base*1.28, start:start + k*0.11, dur:.09, vol:.065, type:'sine', attack:.012, lp:3300, detune:.012});
     }
   }
   function tone(opt){
@@ -1248,10 +1301,11 @@ h1{
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     o.type = opt.type || 'sine';
-    o.frequency.setValueAtTime(opt.freq, t0);
+    const detune = opt.detune || 0;
+    o.frequency.setValueAtTime(opt.freq * (1 + (Math.random()*2-1)*detune), t0);
     if(opt.glideTo){ o.frequency.exponentialRampToValueAtTime(opt.glideTo, t0 + opt.dur); }
     let node = o;
-    if(opt.lp){ const f = audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value = opt.lp; o.connect(f); node = f; }
+    if(opt.lp){ const f = audioCtx.createBiquadFilter(); f.type='lowpass'; f.frequency.value = opt.lp; f.Q.value = opt.q || .7; o.connect(f); node = f; }
     node.connect(g); g.connect(masterGain);
     const v = opt.vol || 0.2;
     g.gain.setValueAtTime(0, t0);
@@ -1340,9 +1394,9 @@ h1{
     const g = audioCtx.createGain();
     src.connect(bp1); bp1.connect(bp2); bp2.connect(g); g.connect(masterGain);
     g.gain.setValueAtTime(0, t0);
-    const pulses = 9, pdur = 0.026, gap = 0.02; let t = t0;
+    const pulses = 7, pdur = 0.032, gap = 0.032; let t = t0;
     for(let k=0;k<pulses;k++){
-      g.gain.linearRampToValueAtTime(0.06, t + 0.004);
+      g.gain.linearRampToValueAtTime(0.028, t + 0.006);
       g.gain.linearRampToValueAtTime(0.0001, t + pdur);
       t += pdur + gap;
     }
@@ -1357,7 +1411,7 @@ h1{
       const bp=audioCtx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq*2.1; bp.Q.value=1.1;
       const ng=audioCtx.createGain();
       src.connect(bp); bp.connect(ng); ng.connect(masterGain);
-      ng.gain.setValueAtTime(vel*0.5, t0);
+      ng.gain.setValueAtTime(vel*0.32, t0);
       ng.gain.exponentialRampToValueAtTime(0.0001, t0+0.018);
       src.start(t0); src.stop(t0+0.05);
     }
@@ -1369,7 +1423,7 @@ h1{
       o.frequency.setValueAtTime(freq*p.r*1.06, t0);
       o.frequency.exponentialRampToValueAtTime(freq*p.r, t0+0.025); // 起音微降＝木頭的「叩」
       o.connect(g); g.connect(masterGain);
-      const v=vel*p.a*0.5;
+      const v=vel*p.a*0.32;
       g.gain.setValueAtTime(0,t0);
       g.gain.linearRampToValueAtTime(v,t0+0.003);
       g.gain.exponentialRampToValueAtTime(0.0001,t0+p.d);
@@ -1389,7 +1443,7 @@ h1{
     src.start(t0); src.stop(t0+0.08);
   }
 
-  const SOUND_LIST = ['wind','bowl','drop','birds','rain','ocean','stream','night','muyu'];
+  const SOUND_LIST = ['wind','birds','rain','stream','ocean','night','bowl','drop','muyu'];
   const SOUNDS = {
     bell(){
       tone({freq:523.25,dur:1.6,vol:.22}); tone({freq:659.25,dur:1.6,vol:.13});
@@ -1397,8 +1451,11 @@ h1{
       tone({freq:1046.5,start:1.1,dur:2.2,vol:.07});
     },
     wind(){
-      const n=[1318.5,1567.98,1760,2093,2349.32];
-      for(let i=0;i<6;i++){ tone({freq:n[Math.floor(Math.random()*n.length)],start:i*0.18+Math.random()*0.08,dur:2.4,vol:.10}); }
+      noiseTone({dur:3.8,vol:.018,bp:1600,q:.45,attack:.9,release:1.5,drift:.55});
+      const n=[1046.5,1244.5,1396.9,1568,1760];
+      for(let i=0;i<5;i++){
+        tone({freq:n[Math.floor(Math.random()*n.length)],start:i*0.34+Math.random()*0.22,dur:2.8,vol:.055,type:'sine',attack:.12,lp:2600,detune:.012});
+      }
     },
     piano(){
       // 溫柔上行琶音：低音根音當暖底 + 力度與微時間人性化，避免機械僵硬
@@ -1415,39 +1472,44 @@ h1{
       });
     },
     bowl(){
-      tone({freq:220,dur:4.2,vol:.22,attack:.12}); tone({freq:221.3,dur:4.2,vol:.16,attack:.12});
-      tone({freq:660,dur:3.6,vol:.07,attack:.2}); tone({freq:880,dur:3.0,vol:.04,attack:.25});
+      tone({freq:196,dur:4.8,vol:.16,attack:.18,lp:1700,detune:.002});
+      tone({freq:197.1,dur:4.8,vol:.11,attack:.18,lp:1700,detune:.002});
+      tone({freq:588,dur:3.9,vol:.045,attack:.28,lp:2100,detune:.003});
+      tone({freq:784,dur:3.1,vol:.024,attack:.34,lp:2300,detune:.003});
     },
     drop(){
-      tone({freq:1318.5,glideTo:880,dur:0.5,vol:.18,attack:.005});
-      tone({freq:1046.5,glideTo:740,start:.32,dur:0.7,vol:.14,attack:.005});
-      tone({freq:880,start:.7,dur:1.6,vol:.10});
+      noiseTone({dur:2.4,vol:.012,bp:2400,q:.7,attack:.8,release:1.1,drift:.5});
+      tone({freq:1174.7,glideTo:740,dur:.62,vol:.09,attack:.018,lp:2400,detune:.01});
+      tone({freq:987.8,glideTo:622,start:.44,dur:.84,vol:.07,attack:.018,lp:2200,detune:.01});
+      tone({freq:739.9,start:1.03,dur:1.7,vol:.045,attack:.06,lp:1800,detune:.006});
     },
     // ---- 大自然聲音 ----
     birds(){
-      noiseTone({dur:3.4,vol:.025,bp:3500,q:.6,attack:.5,release:1.0}); // 微弱林間底噪
-      const n=5;
-      for(let i=0;i<n;i++){ chirp(2200+Math.random()*1600, i*0.5+Math.random()*0.2); }
+      noiseTone({dur:4.2,vol:.018,bp:2400,q:.5,attack:.9,release:1.5,drift:.5}); // 微弱林間底噪
+      const n=4;
+      for(let i=0;i<n;i++){ chirp(1500+Math.random()*1100, i*0.72+Math.random()*0.24); }
     },
     rain(){
-      noiseTone({dur:4.2,vol:.16,hp:1100,lp:7500,attack:.6,release:1.2});
+      noiseTone({dur:4.6,vol:.105,hp:900,lp:5200,attack:.9,release:1.5,drift:.38});
+      noiseTone({dur:4.6,vol:.032,bp:1700,q:.55,attack:.7,release:1.4,drift:.5});
       // 幾滴清脆水珠點綴
-      for(let i=0;i<4;i++){ tone({freq:1600+Math.random()*900,glideTo:700,start:0.6+i*0.7,dur:0.18,vol:.05,attack:.004}); }
+      for(let i=0;i<3;i++){ tone({freq:1100+Math.random()*650,glideTo:640,start:0.75+i*0.92+Math.random()*0.18,dur:.22,vol:.028,attack:.012,lp:2400,detune:.01}); }
     },
     ocean(){
       // 三道緩緩起落的海浪
-      for(let i=0;i<3;i++){ noiseTone({start:i*1.5,dur:2.2,vol:.24,lp:560,attack:.8,release:1.1}); }
+      for(let i=0;i<3;i++){ noiseTone({start:i*1.45,dur:2.5,vol:.17,lp:520,attack:1.0,release:1.25,drift:.34}); }
+      noiseTone({dur:4.8,vol:.025,bp:950,q:.35,attack:1.1,release:1.8,drift:.48});
     },
     stream(){
-      noiseTone({dur:4.0,vol:.14,bp:2600,q:.7,attack:.5,release:1.0});
-      noiseTone({dur:4.0,vol:.06,bp:4300,q:1.1,attack:.5,release:1.0});
+      noiseTone({dur:4.4,vol:.09,bp:1850,q:.55,attack:.8,release:1.25,drift:.52});
+      noiseTone({dur:4.4,vol:.035,bp:3200,q:.85,attack:.8,release:1.25,drift:.48});
       // 細微汩汩水泡
-      for(let i=0;i<5;i++){ tone({freq:900+Math.random()*500,glideTo:600,start:Math.random()*3.2,dur:0.12,vol:.03,attack:.004}); }
+      for(let i=0;i<5;i++){ tone({freq:720+Math.random()*360,glideTo:520,start:Math.random()*3.5,dur:.15,vol:.018,attack:.014,lp:1800,detune:.014}); }
     },
     night(){
-      noiseTone({dur:4.6,vol:.02,hp:1400,lp:3600,attack:.8,release:1.4}); // 夜的柔和底噪
+      noiseTone({dur:4.8,vol:.014,hp:900,lp:3000,attack:1.1,release:1.6,drift:.45}); // 夜的柔和底噪
       // 真實蟲鳴：數聲此起彼落的「唧─唧─」顫音，音高與節奏略有變化
-      for(let i=0;i<5;i++){ cricket(i*0.7 + Math.random()*0.18, 4200 + Math.random()*600); }
+      for(let i=0;i<4;i++){ cricket(i*0.88 + Math.random()*0.24, 3200 + Math.random()*520); }
     },
     // 台灣校園下課鐘：西敏寺鐘聲（Westminster Quarters）完整四句
     school(){
@@ -1456,10 +1518,10 @@ h1{
         [Gs, Fs, E,  B ],   // 第1句
         [E,  Fs, Gs, E ]    // 第3句
       ];
-      const noteGap = 0.78, phraseGap = 1.35;  // 兩句之間停頓拉長
+      const noteGap = 0.82, phraseGap = 1.45;  // 兩句之間停頓拉長
       let t = 0;
       phrases.forEach(ph=>{
-        ph.forEach(f=>{ bellStrike(f, t, 0.62); t += noteGap; });
+        ph.forEach(f=>{ bellStrike(f, t + Math.random()*0.025, 0.44); t += noteGap; });
         t += phraseGap;
       });
     },
@@ -1664,7 +1726,7 @@ h1{
 
   if(resetTodayBtn){
     resetTodayBtn.addEventListener('click', function(){
-      cyclesRun = 0; lastDay = todayKey();
+      cyclesRun = 0; cycleData = { date: todayStr(), count: 0 }; saveCycles();
       renderRestCount(); renderDayProgress(); renderStarProgress(); saveState(); saveSession();
       resetTodayBtn.textContent = '今日次數已重置';
       setTimeout(function(){ resetTodayBtn.textContent = '重置今日次數'; }, 1800);
