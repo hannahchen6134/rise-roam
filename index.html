@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -148,6 +148,8 @@
   }
   @keyframes ringBreath{0%,100%{opacity:.34;transform:scale(.97)}50%{opacity:.64;transform:scale(1.05)}}
   .ring-wrap.glow-on::before{opacity:.85;animation:none}
+  .ring-wrap.break-mode::before{background:radial-gradient(circle,rgba(138,154,109,.34),transparent 68%);opacity:.62}
+  .ring-wrap.break-mode .ring-prog{filter:drop-shadow(0 0 10px rgba(138,154,109,.38))}
   svg{width:100%;height:100%;display:block;transform:rotate(-90deg);position:relative}
   .ring-track{stroke:var(--ring-track)}
   .ring-prog{
@@ -291,12 +293,12 @@
   .setting-section{padding:16px 0 18px;border-top:1px solid rgba(184,146,74,.18)}
   .setting-section:first-of-type{border-top:0;padding-top:6px}
   .section-title{font-family:var(--serif);font-size:11px;color:var(--gold-deep);letter-spacing:.24em;margin:0 0 12px;text-align:left;opacity:.86}
-  .interval-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:284px;margin:0 auto}
-  .interval-opts button,.settings-actions button{border:1px solid var(--gold-border);background:transparent;color:var(--text-2);cursor:pointer;padding:10px 0;border-radius:12px;font-family:var(--serif);font-size:12.5px;letter-spacing:.08em;transition:background .2s,color .2s,border-color .2s,box-shadow .25s,transform .2s}
-  .interval-opts button.active{background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;box-shadow:0 0 14px -3px var(--glow)}
+  .interval-opts,.break-opts,.preset-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:284px;margin:0 auto}
+  .interval-opts button,.break-opts button,.preset-opts button,.settings-actions button{border:1px solid var(--gold-border);background:transparent;color:var(--text-2);cursor:pointer;padding:10px 0;border-radius:12px;font-family:var(--serif);font-size:12.5px;letter-spacing:.08em;transition:background .2s,color .2s,border-color .2s,box-shadow .25s,transform .2s}
+  .interval-opts button.active,.break-opts button.active,.preset-opts button.active{background:var(--gold-light);color:var(--gold-deep);border-color:transparent;font-weight:600;box-shadow:0 0 14px -3px var(--glow)}
   .settings-actions{display:flex;justify-content:center;margin-top:12px}
   .settings-actions button{min-width:132px;padding:10px 16px;background:rgba(255,255,255,.34)}
-  @media (hover:hover){.interval-opts button:hover,.settings-actions button:hover{transform:translateY(-1px);color:var(--gold-deep);background:var(--gold-light)}}
+  @media (hover:hover){.interval-opts button:hover,.break-opts button:hover,.preset-opts button:hover,.settings-actions button:hover{transform:translateY(-1px);color:var(--gold-deep);background:var(--gold-light)}}
   .foot{margin-top:22px;font-size:10.5px;color:rgba(126,105,76,.74);line-height:2;letter-spacing:.04em}
   .brand{font-family:'Dancing Script',var(--serif-en);font-size:16px;font-weight:600;color:var(--gold-deep);opacity:.5;text-align:center;letter-spacing:.02em;margin-top:14px}
   .foot a{color:var(--gold-deep);cursor:pointer;text-decoration:underline;text-decoration-color:var(--gold-border)}
@@ -362,9 +364,20 @@
   .setting-section:first-of-type{border-top:1px solid rgba(184,146,74,.16);padding-top:16px}
   .section-title{font-size:13px;color:var(--brown-deep);letter-spacing:.12em;margin:0;text-align:left;opacity:.92}
   .section-copy{font-family:var(--sans);font-size:11px;line-height:1.7;color:var(--text-3);letter-spacing:.03em;text-align:left;margin:5px 0 13px}
-  .interval-opts{max-width:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
-  .interval-opts button,.repeat-opts button,.settings-actions button{min-height:42px;border-radius:13px;background:rgba(255,255,255,.38);font-family:var(--serif);font-size:13px;color:rgba(67,48,28,.72)}
-  .interval-opts button.active,.repeat-opts button.active{background:linear-gradient(135deg,rgba(216,183,138,.32),rgba(255,255,255,.5));color:var(--gold-deep);box-shadow:0 12px 24px -20px rgba(156,122,69,.8),0 0 0 1px rgba(184,146,74,.06) inset}
+  .interval-opts,.break-opts{max-width:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+  .preset-opts{max-width:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .preset-opts button{display:flex;min-height:64px;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;text-align:left;padding:12px 13px}
+  .preset-opts span{font-family:var(--serif);font-size:14px;color:var(--brown-deep);letter-spacing:.08em}
+  .preset-opts small{font-family:var(--sans);font-size:10.5px;color:var(--text-3);letter-spacing:.02em}
+  .preset-opts button.active span{color:var(--gold-deep)}
+  .interval-opts button,.break-opts button,.preset-opts button,.repeat-opts button,.settings-actions button{min-height:42px;border-radius:13px;background:rgba(255,255,255,.38);font-family:var(--serif);font-size:13px;color:rgba(67,48,28,.72)}
+  .interval-opts button.active,.break-opts button.active,.preset-opts button.active,.repeat-opts button.active{background:linear-gradient(135deg,rgba(216,183,138,.32),rgba(255,255,255,.5));color:var(--gold-deep);box-shadow:0 12px 24px -20px rgba(156,122,69,.8),0 0 0 1px rgba(184,146,74,.06) inset}
+  .settings-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-family:var(--serif);font-size:13px;color:var(--brown-deep);letter-spacing:.12em}
+  .settings-summary::-webkit-details-marker{display:none}
+  .settings-summary::after{content:'+';width:28px;height:28px;border:1px solid rgba(184,146,74,.2);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.42);color:var(--gold-deep);font-size:18px;line-height:1;transition:transform .25s,background .25s}
+  .sound-section[open] .settings-summary::after{content:'−';background:var(--gold-light)}
+  .settings-summary small{margin-left:auto;font-family:var(--sans);font-size:10.5px;color:var(--text-3);letter-spacing:.03em;font-weight:400}
+  .sound-panel{padding-top:12px}
   .vol-row{max-width:none;padding:10px 12px;border:1px solid rgba(184,146,74,.13);border-radius:16px;background:rgba(255,255,255,.38)}
   .vol-icon{width:22px;text-align:center}
   .label{margin:14px 0 10px;text-align:left;letter-spacing:.12em;color:var(--text-2)}
@@ -384,7 +397,8 @@
   @media (max-width:430px){
     .settings{padding:24px 22px 28px}
     .setting-section{padding:15px 14px 17px}
-    .interval-opts{grid-template-columns:repeat(2,1fr)}
+    .interval-opts,.break-opts,.preset-opts{grid-template-columns:repeat(2,1fr)}
+    .preset-opts button{min-height:58px}
     .ah-times{flex-wrap:wrap;justify-content:center}
     .ah-times input[type=time]{width:calc((100% - 26px)/2);min-width:116px}
   }
@@ -775,7 +789,17 @@ h1{
           <span class="settings-title">設定</span>
           <button class="settings-close" id="settingsClose" aria-label="關閉設定">×</button>
         </div>
-        <p class="settings-intro">依照你的工作節奏調整提醒；設定會自動保存在這台裝置。</p>
+        <p class="settings-intro">先選一個節奏就能開始；想微調時，再展開下面的細節設定。</p>
+
+        <section class="setting-section rhythm-section">
+          <div class="section-title">快速模式</div>
+          <p class="section-copy">依照今天的狀態選一種節奏，系統會自動帶入提醒間隔與走動暫停。</p>
+          <div class="preset-opts" id="presetOpts">
+            <button type="button" data-preset="gentle"><span>溫柔</span><small>30 分 / 1 分</small></button>
+            <button type="button" data-preset="standard" class="active"><span>標準</span><small>25 分 / 30 秒</small></button>
+            <button type="button" data-preset="active"><span>積極</span><small>20 分 / 1 分</small></button>
+          </div>
+        </section>
 
         <section class="setting-section">
           <div class="section-title">提醒間隔</div>
@@ -789,7 +813,19 @@ h1{
         </section>
 
         <section class="setting-section">
-          <div class="section-title">提醒聲音</div>
+          <div class="section-title">走動暫停</div>
+          <p class="section-copy">提醒響起後，先保留一段真正起身活動的時間；預設 30 秒。</p>
+          <div class="break-opts" id="breakOpts">
+            <button type="button" data-break="30" class="active">30 秒</button>
+            <button type="button" data-break="60">1 分</button>
+            <button type="button" data-break="180">3 分</button>
+            <button type="button" data-break="300">5 分</button>
+          </div>
+        </section>
+
+        <details class="setting-section sound-section">
+          <summary class="settings-summary"><span>提醒聲音</span><small>音量與鈴聲</small></summary>
+          <div class="sound-panel">
           <p class="section-copy">調整提醒音量，點選鈴聲可先試聽。</p>
           <div class="vol-row">
             <span class="vol-icon">♪</span>
@@ -817,13 +853,14 @@ h1{
           </div>
           <div class="cta-dots sc-dots" id="soundsDots"></div>
           <div class="settings-actions"><button type="button" id="testReminderBtn">測試提醒</button></div>
-        </section>
+          </div>
+        </details>
 
         <section class="setting-section">
-          <div class="section-title">提醒次數</div>
-          <p class="section-copy">設定這次啟動後要提醒幾輪；選「一直提醒」會持續循環。</p>
+          <div class="section-title">本次循環</div>
+          <p class="section-copy">設定按下開始後最多跑幾輪；時間到仍會短暫補響，選「持續循環」會一直提醒。</p>
           <div class="repeat-opts" id="repeatOpts">
-            <button type="button" data-rep="0" class="active">一直提醒</button>
+            <button type="button" data-rep="0" class="active">持續循環</button>
             <button type="button" data-rep="4">4 次</button>
             <button type="button" data-rep="8">8 次</button>
             <button type="button" data-rep="12">12 次</button>
@@ -955,6 +992,12 @@ h1{
 (function(){
   const R = 100, CIRC = 2 * Math.PI * R;
   const INTERVAL_OPTIONS = [20,25,30,45];
+  const BREAK_OPTIONS = [30,60,180,300];
+  const RHYTHM_PRESETS = {
+    gentle: { intervalMin: 30, breakSec: 60 },
+    standard: { intervalMin: 25, breakSec: 30 },
+    active: { intervalMin: 20, breakSec: 60 }
+  };
   let intervalMin = 25;
   let totalMs = intervalMin * 60 * 1000;
   const prog = document.getElementById('prog');
@@ -972,6 +1015,8 @@ h1{
   const ringWrap = document.getElementById('ringWrap');
   const volEl = document.getElementById('vol');
   const intervalNote = document.getElementById('intervalNote');
+  const breakOpts = document.getElementById('breakOpts');
+  const presetOpts = document.getElementById('presetOpts');
   const nextInfo = document.getElementById('nextInfo');
   const installBtn = document.getElementById('installBtn');
   const testReminderBtn = document.getElementById('testReminderBtn');
@@ -987,10 +1032,12 @@ h1{
   if(soundMode === 'bell' || soundMode === 'piano' || soundMode === 'fire') soundMode = 'auto';   // 已移除的選項，舊設定轉回自動輪流
   let volume = (typeof saved.volume === 'number') ? saved.volume : 70;  // 0~100
   let repeat = (typeof saved.repeat === 'number') ? saved.repeat : 0;   // 0 = 一直提醒
+  let breakSec = BREAK_OPTIONS.includes(saved.breakSec) ? saved.breakSec : 30;
+  let rhythmPreset = RHYTHM_PRESETS[saved.rhythmPreset] ? saved.rhythmPreset : (Object.keys(RHYTHM_PRESETS).find(function(k){ return RHYTHM_PRESETS[k].intervalMin === intervalMin && RHYTHM_PRESETS[k].breakSec === breakSec; }) || 'custom');
   let ahOn = !!saved.ahOn;                                              // 限定提醒時段
   let ahStart = saved.ahStart || '09:00';
   let ahEnd = saved.ahEnd || '18:00';
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ intervalMin:intervalMin, soundMode:soundMode, volume:volume, repeat:repeat, ahOn:ahOn, ahStart:ahStart, ahEnd:ahEnd })); }
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify({ rhythmPreset:rhythmPreset, intervalMin:intervalMin, breakSec:breakSec, soundMode:soundMode, volume:volume, repeat:repeat, ahOn:ahOn, ahStart:ahStart, ahEnd:ahEnd })); }
 
   // 是否在提醒時段內（時段外不響）
   function toMin(t){ var p=(t||'').split(':'); return (parseInt(p[0],10)||0)*60 + (parseInt(p[1],10)||0); }
@@ -1081,12 +1128,12 @@ h1{
   });
   volEl.addEventListener('change', ()=>{ primeAudio(); playSound(soundMode==='auto' ? SOUND_LIST[autoIndex % SOUND_LIST.length] : soundMode); });
 
-  let endTime = 0, running = false, tick = null, cyclesRun = 0, alertRepeatTimer = null;
+  let endTime = 0, running = false, tick = null, cyclesRun = 0, alertRepeatTimer = null, timerMode = 'work';
 
   // 計時狀態持久化（重整／意外關閉後可接續）
   const SESSION_KEY = 'rest-reminder-session';
   function saveSession(){
-    try{ localStorage.setItem(SESSION_KEY, JSON.stringify({ running:running, endTime:endTime, cyclesRun:cyclesRun, moveIdx:moveIdx, intervalMin:intervalMin })); }catch(e){}
+    try{ localStorage.setItem(SESSION_KEY, JSON.stringify({ running:running, endTime:endTime, cyclesRun:cyclesRun, moveIdx:moveIdx, intervalMin:intervalMin, breakSec:breakSec, timerMode:timerMode })); }catch(e){}
   }
 
   // 響鈴時的「待會再說・5 分鐘」
@@ -1105,6 +1152,7 @@ h1{
   snoozeBtn.addEventListener('click', function(){
     if(!running) return;
     clearAlertRepeat();
+    timerMode = 'work'; ringWrap.classList.remove('break-mode');
     endTime = Date.now() + 5*60*1000;   // 5 分鐘後再提醒
     stateEl.textContent = '5 分鐘後再提醒';
     updateNextInfo();
@@ -1115,11 +1163,10 @@ h1{
   }
   function startAlertRepeat(){
     clearAlertRepeat();
-    if(repeat !== 0) return;
     let nudges = 0;
     const maxNudges = 8;
     const nudge = function(){
-      if(!running || snoozeBtn.hidden || repeat !== 0 || nudges >= maxNudges){ clearAlertRepeat(); return; }
+      if(!running || snoozeBtn.hidden || nudges >= maxNudges){ clearAlertRepeat(); return; }
       nudges++;
       ringBell();
       alertRepeatTimer = setTimeout(nudge, 6500);
@@ -1136,26 +1183,47 @@ h1{
     const d = new Date(ts);
     return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   }
+  function fmtBreakDuration(sec){
+    return sec < 60 ? sec + ' 秒' : Math.round(sec/60) + ' 分鐘';
+  }
+  function syncPresetUI(){
+    if(!presetOpts) return;
+    [...presetOpts.children].forEach(function(b){ b.classList.toggle('active', b.dataset.preset === rhythmPreset); });
+  }
+  function markCustomRhythm(){ rhythmPreset = 'custom'; syncPresetUI(); }
   function updateIntervalUI(){
     totalMs = intervalMin * 60 * 1000;
-    if(intervalNote) intervalNote.textContent = '每 ' + intervalMin + ' 分鐘提醒一次';
+    if(intervalNote) intervalNote.textContent = '每 ' + intervalMin + ' 分鐘提醒，提醒後休息 ' + fmtBreakDuration(breakSec);
     if(!running){ showTime(totalMs); prog.style.strokeDashoffset = 0; }
     document.querySelectorAll('#intervalOpts button').forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.min,10) === intervalMin); });
+    if(breakOpts){ [...breakOpts.children].forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.break,10) === breakSec); }); }
+    syncPresetUI();
     updateNextInfo();
   }
   function updateNextInfo(){
     if(!nextInfo) return;
-    if(running && endTime > Date.now()) nextInfo.textContent = '下一次提醒：' + fmtClock(endTime);
-    else nextInfo.textContent = '按下開始後，會顯示下一次提醒時間';
+    if(running && endTime > Date.now()){
+      nextInfo.textContent = timerMode === 'break' ? '走動休息到：' + fmtClock(endTime) : '下一次提醒：' + fmtClock(endTime);
+    } else nextInfo.textContent = '按下開始後，會顯示下一次提醒時間';
   }
   function render(){
     const remain = endTime - Date.now();
     showTime(remain);
     updateNextInfo();
-    if(running) document.title = fmt(remain) + ' · Rise & Roam';
-    const frac = Math.max(0, Math.min(1, remain / totalMs));
+    if(running) document.title = (timerMode === 'break' ? '休息 ' : '') + fmt(remain) + ' · Rise & Roam';
+    const duration = timerMode === 'break' ? breakSec * 1000 : totalMs;
+    const frac = Math.max(0, Math.min(1, remain / duration));
     prog.style.strokeDashoffset = CIRC * (1 - frac);
+    ringWrap.classList.toggle('break-mode', running && timerMode === 'break');
     if(remain <= 0 && running){
+      if(timerMode === 'break'){
+        clearAlertRepeat(); hideSnooze();
+        timerMode = 'work'; ringWrap.classList.remove('break-mode');
+        endTime = Date.now() + totalMs;
+        stateEl.textContent = '提醒中';
+        saveSession(); updateNextInfo();
+        return;
+      }
       if(withinActiveHours()){
         ringBell();
         // 計數一次完成的週期、換下一個起身小動作、發通知
@@ -1175,10 +1243,14 @@ h1{
           running = false;
           toggle.textContent = '開始 ' + intervalMin + ' 分鐘提醒'; toggle.classList.add('off');
           stateEl.textContent = '已完成 ' + repeat + ' 次';
+          timerMode = 'work'; ringWrap.classList.remove('break-mode');
           showTime(totalMs); prog.style.strokeDashoffset = 0;
           document.title = 'Rise & Roam · 起來走一走';
         } else {
-          endTime = Date.now() + totalMs;
+          timerMode = 'break';
+          endTime = Date.now() + breakSec * 1000;
+          stateEl.textContent = '走動休息中';
+          updateNextInfo();
         }
       } else {
         // 提醒時段外：安靜略過、繼續計時，回到時段內再響
@@ -1190,7 +1262,8 @@ h1{
   function loop(){ render(); tick = setTimeout(function f(){ render(); if(running) tick = setTimeout(f, 250); }, 250); }
 
   function start(){
-    clearAlertRepeat();
+    clearAlertRepeat(); hideSnooze();
+    timerMode = 'work'; ringWrap.classList.remove('break-mode');
     running = true; cyclesRun = 0; endTime = Date.now() + totalMs;
     toggle.textContent = '暫停提醒'; toggle.classList.remove('off');
     stateEl.textContent = '提醒中';
@@ -1200,13 +1273,13 @@ h1{
   }
   function stop(){
     clearAlertRepeat();
-    running = false; if(tick) clearTimeout(tick);
+    running = false; timerMode = 'work'; if(tick) clearTimeout(tick);
     toggle.textContent = '開始 ' + intervalMin + ' 分鐘提醒'; toggle.classList.add('off');
     stateEl.textContent = '已暫停';
     updateNextInfo();
     showTime(totalMs); prog.style.strokeDashoffset = 0;
     document.title = 'Rise & Roam · 起來走一走';
-    ringWrap.classList.remove('glow-on');
+    ringWrap.classList.remove('glow-on','break-mode');
     saveSession();
   }
   toggle.addEventListener('click', ()=>{ primeAudio(); running ? stop() : start(); });
@@ -1597,13 +1670,17 @@ h1{
     try{
       const ss = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
       if(ss && ss.running && typeof ss.endTime === 'number' && ss.endTime > Date.now()){
-        if(INTERVAL_OPTIONS.includes(ss.intervalMin)){ intervalMin = ss.intervalMin; updateIntervalUI(); }
+        if(INTERVAL_OPTIONS.includes(ss.intervalMin)){ intervalMin = ss.intervalMin; }
+        if(BREAK_OPTIONS.includes(ss.breakSec)){ breakSec = ss.breakSec; }
+        timerMode = ss.timerMode === 'break' ? 'break' : 'work';
+        updateIntervalUI();
         endTime = ss.endTime;
         cyclesRun = ss.cyclesRun || 0;
         moveIdx = ss.moveIdx || 0;
         running = true;
         toggle.textContent = '暫停提醒'; toggle.classList.remove('off');
-        stateEl.textContent = '提醒中';
+        stateEl.textContent = timerMode === 'break' ? '走動休息中' : '提醒中';
+        ringWrap.classList.toggle('break-mode', timerMode === 'break');
         updateNextInfo();
         renderMove();
         loop();
@@ -1692,6 +1769,19 @@ h1{
   settings.addEventListener('click', (e)=>{ if(e.target === settings) closeSettings(); });
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && settings.classList.contains('open')) closeSettings(); });
 
+  if(presetOpts){
+    presetOpts.addEventListener('click', function(e){
+      const b = e.target.closest('button'); if(!b) return;
+      const preset = RHYTHM_PRESETS[b.dataset.preset];
+      if(!preset) return;
+      rhythmPreset = b.dataset.preset;
+      intervalMin = preset.intervalMin; breakSec = preset.breakSec; totalMs = intervalMin * 60 * 1000;
+      if(running && timerMode === 'work'){ endTime = Date.now() + totalMs; stateEl.textContent = '提醒中'; saveSession(); }
+      if(running && timerMode === 'break'){ endTime = Date.now() + breakSec * 1000; stateEl.textContent = '走動休息中'; saveSession(); }
+      updateIntervalUI(); saveState();
+    });
+  }
+
   const repeatOpts = document.getElementById('repeatOpts');
   [...repeatOpts.children].forEach(b=> b.classList.toggle('active', parseInt(b.dataset.rep,10) === repeat));
   repeatOpts.addEventListener('click', (e)=>{
@@ -1709,7 +1799,20 @@ h1{
       const nextMin = parseInt(b.dataset.min,10);
       if(!INTERVAL_OPTIONS.includes(nextMin)) return;
       intervalMin = nextMin; totalMs = intervalMin * 60 * 1000;
-      if(running){ endTime = Date.now() + totalMs; stateEl.textContent = '提醒中'; saveSession(); }
+      markCustomRhythm();
+      if(running && timerMode === 'work'){ endTime = Date.now() + totalMs; stateEl.textContent = '提醒中'; saveSession(); }
+      updateIntervalUI(); saveState();
+    });
+  }
+
+  if(breakOpts){
+    breakOpts.addEventListener('click', function(e){
+      const b = e.target.closest('button'); if(!b) return;
+      const nextSec = parseInt(b.dataset.break,10);
+      if(!BREAK_OPTIONS.includes(nextSec)) return;
+      breakSec = nextSec;
+      markCustomRhythm();
+      if(running && timerMode === 'break'){ endTime = Date.now() + breakSec * 1000; stateEl.textContent = '走動休息中'; saveSession(); }
       updateIntervalUI(); saveState();
     });
   }
@@ -1720,7 +1823,7 @@ h1{
       stateEl.textContent = '正在測試提醒';
       ringWrap.classList.add('pulse','glow-on');
       try{ ringBell(); }catch(e){}
-      setTimeout(function(){ ringWrap.classList.remove('pulse'); if(!running) ringWrap.classList.remove('glow-on'); stateEl.textContent = running ? '提醒中' : prevState; }, 1700);
+      setTimeout(function(){ ringWrap.classList.remove('pulse'); if(!running) ringWrap.classList.remove('glow-on'); stateEl.textContent = running ? (timerMode === 'break' ? '走動休息中' : '提醒中') : prevState; }, 1700);
     });
   }
 
@@ -1826,3 +1929,9 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>
+
+
+
+
+
+
